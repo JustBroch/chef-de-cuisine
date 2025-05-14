@@ -65,3 +65,5 @@ export default tseslint.config({
     },
 });
 ```
+## API Documentation
+https://docs.google.com/document/d/1DpVdCM-CT8sn_lA9-FbAUW-qNMebTVoB-v-XUkf2tQ8/edit?tab=t.z71dgwx0fmq0
