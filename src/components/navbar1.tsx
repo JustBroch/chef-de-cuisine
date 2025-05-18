@@ -59,16 +59,16 @@ const Navbar1 = ({
     title: "Chef de Cuisine",
   },
   menu = [
-    { title: "Home", url: "#" },
+    { title: "Home", url: "/" },
     {
       title: "Recipes",
       url: "#",
       items: [
         {
-          title: "Blog",
-          description: "The latest industry news, updates, and info",
+          title: "Search Recipes",
+          description: "Search for a recipe",
           icon: <Book className="size-5 shrink-0" />,
-          url: "#",
+          url: "recipes",
         },
         {
           title: "Company",
