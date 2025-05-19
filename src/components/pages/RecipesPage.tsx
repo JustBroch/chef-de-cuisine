@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useLoaderData, Form, useSearchParams } from "react-router";
+import { useLoaderData, Form, useSearchParams, Link } from "react-router";
 interface SearchResult {
   recipes: Recipe[];
 }
@@ -78,7 +78,9 @@ export function RecipesPage() {
           <ul>
             {results.recipes.map((recipe: SearchResult) => (
               <li key={recipe.id}>
-                <h3>{recipe.name}</h3>
+                <h3>
+                  <Link to={`${recipe.id}`}>{recipe.name}</Link>
+                </h3>
               </li>
             ))}
           </ul>
