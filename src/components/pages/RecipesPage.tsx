@@ -79,7 +79,9 @@ export function RecipesPage() {
             {results.recipes.map((recipe: SearchResult) => (
               <li key={recipe.id}>
                 <h3>
-                  <Link to={`${recipe.id}`}>{recipe.name}</Link>
+                  <Link to={`${recipe.id}`} className="hover: underline">
+                    {recipe.name}
+                  </Link>
                 </h3>
               </li>
             ))}
