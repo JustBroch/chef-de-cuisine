@@ -6,20 +6,18 @@ interface SearchResult {
 interface Recipe {
   id: number;
   name: string;
-  ingredients: string[];
-  instructions: string[];
-  prepTimeMinutes: number;
-  cookTimeMinutes: number;
+  prep_time: number;
+  cook_time: number;
+  total_time: number;
   servings: number;
-  difficulty: string;
-  cuisine: string;
-  caloriesPerServing: number;
-  tags: string[];
-  userId: number;
-  image: string;
+  ingredients: string[];
+  description: string[];
   rating: number;
-  reviewCount: number;
-  mealType: string[];
+  url: string;
+  cuisine_pat: string;
+  nutrition: object;
+  timing: object;
+  img_src: string;
 }
 
 function assertIsSearchResult(
@@ -71,12 +69,12 @@ export function RecipesPage() {
         </button>
       </Form>
       <div>
-        <p>Results:</p>
-        {results.recipes.length === 0 ? (
+        <h2 className="text-left text-xl mt-3">Results:</h2>
+        {results.length === 0 ? (
           <p> No results</p>
         ) : (
-          <ul>
-            {results.recipes.map((recipe: SearchResult) => (
+          <ul className="text-left mt-3">
+            {results.map((recipe: SearchResult) => (
               <li key={recipe.id}>
                 <h3>
                   <Link to={`${recipe.id}`} className="hover: underline">

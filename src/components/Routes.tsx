@@ -29,7 +29,8 @@ const router = createBrowserRouter([
           //   return { results: [] }; // Return empty results if no search term
           //}
           const response = await fetch(
-            `https://dummyjson.com/recipes/search?q=${query}`
+            //`http://localhost:3001/recipes/search?q=${query}`
+            `http://localhost:3001/recipes`
           );
           const data = (await response.json()) as unknown;
           console.log(data);
@@ -42,8 +43,7 @@ const router = createBrowserRouter([
         Component: RecipePage,
         loader: async ({ params }) => {
           const { id } = params;
-
-          const response = await fetch(`https://dummyjson.com/recipes/${id}/`);
+          const response = await fetch(`http://localhost:3001/recipes/${id}/`);
           const data = (await response.json()) as unknown;
           console.log(data);
 
