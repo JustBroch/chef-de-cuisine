@@ -1,46 +1,10 @@
-import type { FormEvent } from "react";
+import { type FormEvent } from "react";
 import { useLoaderData, Form, useSearchParams, Link } from "react-router";
-interface SearchResult {
-  recipes: Recipe[];
-}
-interface Recipe {
-  id: number;
-  name: string;
-  prep_time: number;
-  cook_time: number;
-  total_time: number;
-  servings: number;
-  ingredients: string[];
-  description: string[];
-  rating: number;
-  url: string;
-  cuisine_pat: string;
-  nutrition: object;
-  timing: object;
-  img_src: string;
-}
-
-function assertIsSearchResult(
-  searchData: unknown
-): asserts searchData is SearchResult[] {
-  // if (!Array.isArray(searchData)) {
-  //   throw new Error("result not an array");
-  // }
-  // if (searchData.length === 0) {
-  //   return;
-  // }
-  // searchData.forEach((result) => {
-  //   if (!("id" in result)) {
-  //     throw new Error("result has no id");
-  //   }
-  //   if (!("name" in result)) {
-  //     throw new Error("result has no name");
-  //   }
-}
+import { assertIsRecipesResult } from "../types.tsx";
 
 export function RecipesPage() {
   const results = useLoaderData();
-  assertIsSearchResult(results);
+  assertIsRecipesResult(results);
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
 
@@ -53,7 +17,7 @@ export function RecipesPage() {
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <label htmlFor="recipeName">Recipe Name:</label>
+        <label htmlFor="recipeName">Recipe:</label>
         <input
           className="border-grey-600 border p-1 m-2"
           type="text"
@@ -74,11 +38,14 @@ export function RecipesPage() {
           <p> No results</p>
         ) : (
           <ul className="text-left mt-3">
-            {results.map((recipe: SearchResult) => (
-              <li key={recipe.id}>
+            {results.map((result) => (
+              <li key={result.id}>
                 <h3>
-                  <Link to={`${recipe.id}`} className="hover: underline">
-                    {recipe.name}
+                  <Link
+                    to={`/recipes/${result.id}`}
+                    className="hover: underline"
+                  >
+                    {result.name}
                   </Link>
                 </h3>
               </li>

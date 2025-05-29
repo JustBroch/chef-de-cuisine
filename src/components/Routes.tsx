@@ -20,7 +20,7 @@ const router = createBrowserRouter([
         Component: HomePage,
       },
       {
-        path: "recipes",
+        path: "search",
         Component: RecipesPage,
         loader: async ({ request }: { request: Request }) => {
           const url = new URL(request.url);
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
           //}
           const response = await fetch(
             //`http://localhost:3001/recipes/search?q=${query}`
-            `http://localhost:3001/recipes`
+            `http://localhost:3001/recipes?name_like=${query}`
           );
           const data = (await response.json()) as unknown;
           console.log(data);

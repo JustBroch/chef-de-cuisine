@@ -1,42 +1,5 @@
 import { useLoaderData } from "react-router";
-interface RecipeResult {
-  recipes: Recipe;
-}
-
-interface Recipe {
-  id: number;
-  name: string;
-  prep_time: number;
-  cook_time: number;
-  total_time: number;
-  servings: number;
-  ingredients: string[];
-  description: string[];
-  rating: number;
-  url: string;
-  cuisine_pat: string;
-  nutrition: object;
-  timing: object;
-  img_src: string;
-}
-
-function assertIsRecipeResult(
-  recipeData: unknown
-): asserts recipeData is Recipe {
-  // if (!Array.isArray(searchData)) {
-  //   throw new Error("result not an array");
-  // }
-  // if (searchData.length === 0) {
-  //   return;
-  // }
-  // searchData.forEach((result) => {
-  //   if (!("id" in result)) {
-  //     throw new Error("result has no id");
-  //   }
-  //   if (!("name" in result)) {
-  //     throw new Error("result has no name");
-  //   }
-}
+import { assertIsRecipeResult } from "../types.tsx";
 
 export function RecipePage() {
   const recipe = useLoaderData();

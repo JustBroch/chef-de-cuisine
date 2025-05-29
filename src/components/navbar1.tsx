@@ -68,7 +68,7 @@ const Navbar1 = ({
           title: "Search Recipes",
           description: "Search for a recipe",
           icon: <Book className="size-5 shrink-0" />,
-          url: "/recipes",
+          url: "/search",
         },
         {
           title: "Company",
