@@ -5,8 +5,8 @@ export type RecipeData = {
   cook_time: number;
   total_time: number;
   servings: number;
-  ingredients: string[];
-  description: string[];
+  ingredients: string;
+  description: string;
   rating: number;
   url: string;
   cuisine_pat: string;
