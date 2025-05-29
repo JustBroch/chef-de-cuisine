@@ -1,7 +1,7 @@
 import { useLoaderData, useSearchParams, Link } from "react-router";
 import { assertIsRecipesResult } from "../types.tsx";
 
-export function RecipesPage() {
+export function SearchPage() {
   const results = useLoaderData();
   assertIsRecipesResult(results);
   const [searchParams, setSearchParams] = useSearchParams();

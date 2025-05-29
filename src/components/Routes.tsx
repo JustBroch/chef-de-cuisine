@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { RecipesPage } from "./pages/RecipesPage";
+import { SearchPage } from "./pages/SearchPage";
 import { RecipePage } from "./pages/RecipePage";
 import App from "../App";
 import { HomePage } from "./pages/HomePage";
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "search",
-        Component: RecipesPage,
+        Component: SearchPage,
         loader: async ({ request }: { request: Request }) => {
           const url = new URL(request.url);
           const query = url.searchParams.get("q");
