@@ -4,7 +4,7 @@ import { assertIsRecipesResult } from "../types.tsx";
 export function SearchPage() {
   const results = useLoaderData();
   assertIsRecipesResult(results);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
 
   return (
