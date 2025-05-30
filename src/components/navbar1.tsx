@@ -1,5 +1,5 @@
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
-
+import SearchForm from "./SearchForm";
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +22,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Header } from "@radix-ui/react-accordion";
 
 interface MenuItem {
   title: string;
@@ -68,7 +69,7 @@ const Navbar1 = ({
           title: "Search Recipes",
           description: "Search for a recipe",
           icon: <Book className="size-5 shrink-0" />,
-          url: "recipes",
+          url: "/search",
         },
         {
           title: "Company",
@@ -154,6 +155,7 @@ const Navbar1 = ({
                   {menu.map((item) => renderMenuItem(item))}
                 </NavigationMenuList>
               </NavigationMenu>
+              <SearchForm />
             </div>
           </div>
           <div className="flex gap-2">
@@ -195,7 +197,9 @@ const Navbar1 = ({
                   >
                     {menu.map((item) => renderMobileMenuItem(item))}
                   </Accordion>
-
+                  <div className="flex flex-col gap-3">
+                    <SearchForm />
+                  </div>
                   <div className="flex flex-col gap-3">
                     <Button asChild variant="outline">
                       <a href={auth.login.url}>{auth.login.title}</a>
