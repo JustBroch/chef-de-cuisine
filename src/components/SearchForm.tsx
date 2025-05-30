@@ -7,7 +7,7 @@ export function SearchForm() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/search?q=${searchQuery}`);
+    navigate(`/recipes/search?query=${searchQuery}`);
   };
 
   return (

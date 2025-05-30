@@ -19,6 +19,7 @@ const router = createBrowserRouter([
         Component: RecipePage,
         loader: async ({ params }) => {
           const { id } = params;
+          // `${baseurl}/api/v1/recipes/${id}`
           const response = await fetch(`http://localhost:3001/recipes/${id}/`);
           const data = (await response.json()) as unknown;
           return data;
@@ -30,17 +31,18 @@ const router = createBrowserRouter([
     Component: SearchLayout,
     children: [
       {
-        path: "search",
+        path: "recipes/search",
         Component: SearchPage,
         loader: async ({ request }: { request: Request }) => {
           const url = new URL(request.url);
-          const query = url.searchParams.get("q");
+          const query = url.searchParams.get("query");
           // Return empty results if no search term
           if (!query) {
             const data: unknown = [];
             return data;
           }
           const response = await fetch(
+            //`${baseurl}/api/v1/recipes/search?query=${query}`
             `http://localhost:3001/recipes?name_like=${query}`
           );
           const data = (await response.json()) as unknown;

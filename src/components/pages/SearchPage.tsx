@@ -5,7 +5,7 @@ export function SearchPage() {
   const results = useLoaderData();
   assertIsRecipesResult(results);
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get("q") || "";
+  const query = searchParams.get("query") || "";
 
   return (
     <>

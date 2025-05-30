@@ -15,9 +15,10 @@ export type RecipeData = {
   img_src: string;
 };
 
-//export type RecipesResult = {
-//  recipes: RecipeData[];
-//};
+export type RecipesResult = {
+  recipes: RecipeData[];
+};
+
 function isObject(value: unknown): value is object {
   return typeof value === "object" && value !== null;
 }
