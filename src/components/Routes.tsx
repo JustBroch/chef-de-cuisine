@@ -1,7 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { RecipesPage } from "./pages/RecipesPage";
+import { SearchPage } from "./pages/SearchPage";
+import { RecipePage } from "./pages/RecipePage";
 import App from "../App";
 import { HomePage } from "./pages/HomePage";
+import { SearchLayout } from "./layouts/SearchLayout";
 
 const router = createBrowserRouter([
   {
@@ -10,24 +12,40 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-
         Component: HomePage,
       },
       {
-        path: "recipes",
-        Component: RecipesPage,
+        path: "recipes/:id",
+        Component: RecipePage,
+        loader: async ({ params }) => {
+          const { id } = params;
+          // `${baseurl}/api/v1/recipes/${id}`
+          const response = await fetch(`http://localhost:3001/recipes/${id}/`);
+          const data = (await response.json()) as unknown;
+          return data;
+        },
+      },
+    ],
+  },
+  {
+    Component: SearchLayout,
+    children: [
+      {
+        path: "recipes/search",
+        Component: SearchPage,
         loader: async ({ request }: { request: Request }) => {
           const url = new URL(request.url);
-          const query = url.searchParams.get("q");
-          // if (!query) {
-          //   return { results: [] }; // Return empty results if no search term
-          //}
+          const query = url.searchParams.get("query");
+          // Return empty results if no search term
+          if (!query) {
+            const data: unknown = [];
+            return data;
+          }
           const response = await fetch(
-            `https://dummyjson.com/recipes/search?q=${query}`
+            //`${baseurl}/api/v1/recipes/search?query=${query}`
+            `http://localhost:3001/recipes?name_like=${query}`
           );
           const data = (await response.json()) as unknown;
-          console.log(data);
-
           return data;
         },
       },
