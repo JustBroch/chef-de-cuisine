@@ -127,8 +127,8 @@ const Navbar1 = ({
       url: "#",
     },
     {
-      title: "Blog",
-      url: "#",
+      title: "Filters",
+      url: "/recipes/filter/",
     },
   ],
   auth = {

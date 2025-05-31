@@ -60,11 +60,7 @@ const router = createBrowserRouter([
           const ingredient1 = url.searchParams.get("ingredient1");
           const ingredient2 = url.searchParams.get("ingredient2");
           const ingredient3 = url.searchParams.get("ingredient3");
-          // Return empty results if no filter term
-          // if (!time) {
-          //   const data: unknown = [];
-          //   return data;
-          // }
+
           const response = await fetch(
             //`${baseurl}/api/v1/recipes/search?query=${query}`
             `http://localhost:3001/recipes?total_time_like=${time}&ingredients_like=${ingredient1}&cuisine_path_like=${cuisine}`
