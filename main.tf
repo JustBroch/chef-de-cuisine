@@ -424,19 +424,15 @@ resource "aws_appautoscaling_policy" "cpu_scale_out" {
 # Docker Build and Push
 #########################
 
-resource "null_resource" "ecr_login" {
+resource "null_resource" "docker_build_push" {
   depends_on = [aws_ecr_repository.app]
 
   provisioner "local-exec" {
-    command = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${aws_ecr_repository.app.repository_url}"
-  }
-}
-
-resource "null_resource" "docker_build_push" {
-  depends_on = [null_resource.ecr_login]
-
-  provisioner "local-exec" {
     command = <<-EOT
+      # ECR Login with explicit credentials file and profile
+      AWS_SHARED_CREDENTIALS_FILE=${abspath("${path.module}/${var.credentials_file}")} aws ecr get-login-password --region ${var.aws_region} --profile ${local.effective_aws_profile} | docker login --username AWS --password-stdin ${aws_ecr_repository.app.repository_url}
+      
+      # Build and push Docker image
       cd backend && \
       docker build --platform linux/amd64 -t ${var.ecr_repository_name} . && \
       docker tag ${var.ecr_repository_name}:latest ${aws_ecr_repository.app.repository_url}:latest && \
@@ -449,6 +445,8 @@ resource "null_resource" "docker_build_push" {
     source_hash = filemd5("${path.module}/backend/app.py")
     requirements_hash = filemd5("${path.module}/backend/requirements.txt")
     dockerfile_hash = filemd5("${path.module}/backend/Dockerfile")
+    # Trigger on every deployment
+    always_rebuild = timestamp()
   }
 }
 
@@ -457,11 +455,7 @@ resource "null_resource" "force_ecs_deployment" {
   depends_on = [null_resource.docker_build_push, aws_ecs_service.app]
 
   provisioner "local-exec" {
-    command = "aws ecs update-service --region ${var.aws_region} --cluster ${aws_ecs_cluster.app.name} --service ${aws_ecs_service.app.name} --force-new-deployment"
-    environment = {
-      AWS_SHARED_CREDENTIALS_FILE = abspath("${path.module}/${var.credentials_file}")
-      AWS_PROFILE = local.effective_aws_profile
-    }
+    command = "AWS_SHARED_CREDENTIALS_FILE=${abspath("${path.module}/${var.credentials_file}")} aws ecs update-service --region ${var.aws_region} --profile ${local.effective_aws_profile} --cluster ${aws_ecs_cluster.app.name} --service ${aws_ecs_service.app.name} --force-new-deployment"
   }
 
   triggers = {

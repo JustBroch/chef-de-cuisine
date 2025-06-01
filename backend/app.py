@@ -22,6 +22,7 @@ from typing import Any, Dict, List
 
 from flask import Flask, jsonify, request, abort
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
@@ -61,6 +62,9 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=6)  # Token expiration 
 # Initialize Flask extensions
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+
+# Enable CORS for all routes and origins
+CORS(app)
 
 # ---------------------------------------------------------------------------
 # Database Models
