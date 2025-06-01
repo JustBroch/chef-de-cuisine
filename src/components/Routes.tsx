@@ -6,6 +6,9 @@ import App from "../App";
 import { HomePage } from "./pages/HomePage";
 import { SearchLayout } from "./layouts/SearchLayout";
 
+//const baseurl = "http://localhost:5000";
+const baseurl =
+  "http://chefdecuisine-alb-1272383064.us-east-1.elb.amazonaws.com";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -21,7 +24,7 @@ const router = createBrowserRouter([
         loader: async ({ params }) => {
           const { id } = params;
           // `${baseurl}/api/v1/recipes/${id}`
-          const response = await fetch(`http://localhost:3001/recipes/${id}/`);
+          const response = await fetch(`${baseurl}/api/v1/recipes/${id}`);
           const data = (await response.json()) as unknown;
           return data;
         },
@@ -43,8 +46,8 @@ const router = createBrowserRouter([
             return data;
           }
           const response = await fetch(
-            //`${baseurl}/api/v1/recipes/search?query=${query}`
-            `http://localhost:3001/recipes?name_like=${query}`
+            `${baseurl}/api/v1/recipes/search?query=${query}`
+            //`${baseurl}/recipes?name_like=${query}`
           );
           const data = (await response.json()) as unknown;
           return data;
@@ -57,13 +60,37 @@ const router = createBrowserRouter([
           const url = new URL(request.url);
           const time = url.searchParams.get("time");
           const cuisine = url.searchParams.get("cuisine");
+          const taste = url.searchParams.get("taste");
           const ingredient1 = url.searchParams.get("ingredient1");
           const ingredient2 = url.searchParams.get("ingredient2");
           const ingredient3 = url.searchParams.get("ingredient3");
 
+          const ingredients: string[] = [];
+          const params = new URLSearchParams();
+          if (time) {
+            params.append("time", time);
+          }
+          if (cuisine) {
+            params.append("cuisine", cuisine);
+          }
+          if (taste) {
+            params.append("taste", taste);
+          }
+          if (ingredient1) {
+            ingredients.push(ingredient1);
+          }
+          if (ingredient2) {
+            ingredients.push(ingredient2);
+          }
+          if (ingredient3) {
+            ingredients.push(ingredient3);
+          }
+          if (ingredients.length != 0) {
+            params.append("ingredients", ingredients.join(","));
+          }
+
           const response = await fetch(
-            //`${baseurl}/api/v1/recipes/search?query=${query}`
-            `http://localhost:3001/recipes?total_time_like=${time}&ingredients_like=${ingredient1}&cuisine_path_like=${cuisine}`
+            `${baseurl}/api/v1/recipes/filter?${params.toString()}`
           );
           const data = (await response.json()) as unknown;
           return data;

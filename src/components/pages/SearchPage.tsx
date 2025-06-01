@@ -13,11 +13,11 @@ export function SearchPage() {
         <h2 className="text-left text-xl mt-3">
           Search Results for "{query}":
         </h2>
-        {results.length === 0 ? (
+        {results.recipes.length === 0 ? (
           <p> No results</p>
         ) : (
           <ul className="text-left mt-3">
-            {results.map((result) => (
+            {results.recipes.map((result) => (
               <li key={result.id}>
                 <h3>
                   <Link
