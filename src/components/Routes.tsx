@@ -23,7 +23,6 @@ const router = createBrowserRouter([
         Component: RecipePage,
         loader: async ({ params }) => {
           const { id } = params;
-          // `${baseurl}/api/v1/recipes/${id}`
           const response = await fetch(`${baseurl}/api/v1/recipes/${id}`);
           const data = (await response.json()) as unknown;
           return data;
@@ -40,14 +39,14 @@ const router = createBrowserRouter([
         loader: async ({ request }: { request: Request }) => {
           const url = new URL(request.url);
           const query = url.searchParams.get("query");
+
           // Return empty results if no search term
           if (!query) {
-            const data: unknown = [];
+            const data: unknown = { recipes: [] };
             return data;
           }
           const response = await fetch(
             `${baseurl}/api/v1/recipes/search?query=${query}`
-            //`${baseurl}/recipes?name_like=${query}`
           );
           const data = (await response.json()) as unknown;
           return data;
@@ -67,6 +66,7 @@ const router = createBrowserRouter([
 
           const ingredients: string[] = [];
           const params = new URLSearchParams();
+
           if (time) {
             params.append("time", time);
           }

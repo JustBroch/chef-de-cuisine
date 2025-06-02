@@ -13,7 +13,7 @@ export function SearchPage() {
         <h2 className="text-left text-xl mt-3">
           Search Results for "{query}":
         </h2>
-        {results.recipes.length === 0 ? (
+        {results?.recipes.length === 0 ? (
           <p> No results</p>
         ) : (
           <ul className="text-left mt-3">
@@ -27,6 +27,7 @@ export function SearchPage() {
                     {result.name}
                   </Link>
                 </h3>
+                <p>{result.description}</p>
               </li>
             ))}
           </ul>
