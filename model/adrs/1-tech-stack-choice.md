@@ -1,15 +1,13 @@
-# 1. Title: Selection of Technology Stack
+# 1. Selection of Technology Stack
 
 Date: 2025-05-13
 
-## Status
-
-Accepted
+Status: Accepted
 
 ## Summary
 
 We decided to use the following technologies for this project:
-1. Frontend - React
+1. Frontend - React, TypeScript
 2. Backend - Python, Flask
 3. Database - PostgreSQL
 
@@ -23,7 +21,7 @@ Through the Cloud Infrastructure Assignment in this course, where we learned to 
 
 We have decided to implement the said tech stack for the following reasons:
 
-React will enable us to create a fast, interactive, and responsive single-page application, improving user experience by minimizing page reloads and providing dynamic content updates.
+React will enable us to create a fast, interactive, and responsive single-page application, improving user experience by minimizing page reloads and providing dynamic content updates. Using TypeScript will allow us to create and customise the front-end to allow for more flexibility in design.
 
 Flask offers a flexible way to develop and expose RESTful APIs. Given our prior experience with Flask in the Cloud Infrastructure Assignment, we can efficiently design APIs that connect the frontend with the backend services.
 
