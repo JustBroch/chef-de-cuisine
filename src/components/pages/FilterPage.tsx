@@ -62,22 +62,22 @@ export function FilterPage() {
               defaultValue={searchParams.get("time") ?? ""}
             >
               <option value="">---------</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="25">25</option>
-              <option value="30">30</option>
-              <option value="35">35</option>
-              <option value="40">40</option>
-              <option value="45">45</option>
-              <option value="50">50</option>
-              <option value="55">55</option>
-              <option value="60">60</option>
-              <option value="70">70</option>
-              <option value="80">80</option>
-              <option value="90">90</option>
-              <option value="100">100</option>
-              <option value="110">110</option>
-              <option value="120">120</option>
+              <option value="15">15 mins</option>
+              <option value="20">20 mins</option>
+              <option value="25">25 mins</option>
+              <option value="30">30 mins</option>
+              <option value="35">35 mins</option>
+              <option value="40">40 mins</option>
+              <option value="45">45 mins</option>
+              <option value="50">50 mins</option>
+              <option value="55">55 mins</option>
+              <option value="60">60 mins</option>
+              <option value="70">70 mins</option>
+              <option value="80">80 mins</option>
+              <option value="90">90 mins</option>
+              <option value="100">100 mins</option>
+              <option value="110">110 mins</option>
+              <option value="120">120 mins</option>
             </select>
 
             <label htmlFor="cuisine">Cuisine: </label>
@@ -177,7 +177,7 @@ export function FilterPage() {
         <div>
           <h2 className="text-left text-xl mt-10">Filters Applied:</h2>
           <ul className="text-left mt-1">
-            {time && <li>Time: {time}</li>}
+            {time && <li>Time: {time} mins</li>}
             {cuisine && <li>Cuisine Category: {cuisine}</li>}
             {taste && <li>Taste: {taste}</li>}
             {(ingredient1 || ingredient2 || ingredient3) && (
