@@ -63,24 +63,14 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=6)  # Token expiration 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 
-# Configure CORS to allow Authorization headers from frontend origins
-frontend_origins = [
-    # Development origins (from your workspace)
-    "http://localhost:5173",    # Vite dev server (npm run dev)
-    "http://localhost:3001",    # JSON server (npm run server)
-    "http://localhost:4173",    # Vite preview (npm run preview)
-    
-    # AWS hosting patterns
-    "https://*.cloudfront.net",      # CloudFront distributions
-    "https://*.amazonaws.com",       # AWS services (S3, ELB, etc.)
-]
-
-# Enable CORS with authorization header support
+# Configure CORS to handle Authorization headers with dynamic origin support
+# This allows any origin while supporting credentials for authenticated routes
 CORS(app,
-     origins=frontend_origins,
-     allow_headers=["Content-Type", "Authorization", "Accept"],
+     origins=True,  # Allow any origin dynamically
+     allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     supports_credentials=True
+     supports_credentials=True,  # Required for Authorization headers
+     expose_headers=["Content-Type", "Authorization"]
 )
 
 # ---------------------------------------------------------------------------
@@ -495,7 +485,7 @@ def get_current_user():
         404: User not found (token valid but user deleted)
     """
     user_id = get_jwt_identity()
-    user: User = User.query.get_or_404(user_id)
+    user: User = User.query.get_or_404(user_id)  # Use directly as int
     return jsonify({
         "user_id": user.id,
         "username": user.username,
@@ -608,7 +598,7 @@ def init_database():
         
         # Only add sample data if database is empty
         if Recipe.query.count() == 0:
-            # Load sample recipes from external JSON file
+            # Load sample recipes from sample_recipes.json if database is empty
             with open('sample_recipes.json', 'r') as f:
                 sample_data = json.load(f)
             

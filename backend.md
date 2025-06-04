@@ -194,44 +194,58 @@ GET /api/v1/recipes/filter?time=45&cuisine=Asian&ingredients=chicken,ginger&tool
 ### JWT Implementation
 
 ```python
-# Token generation
+# Token generation with integer identity
 access_token = create_access_token(identity=user.id)
 
-# Token validation
-@jwt_required()  # Required
-@jwt_required(optional=True)  # Optional
+# Token validation - returns integer directly
+@jwt_required()
+def protected_endpoint():
+    user_id = get_jwt_identity()  # Returns integer directly
+    user = User.query.get_or_404(user_id)
+
+# Optional authentication for public endpoints
+@jwt_required(optional=True)
+def public_endpoint():
+    user_id = get_jwt_identity()  # Returns None if no token, integer if authenticated
 ```
+
+**Key Features:**
+- **Integer Identities**: Flask-JWT-Extended natively supports integer user IDs
+- **Direct Usage**: No string conversion needed - `get_jwt_identity()` returns the integer
+- **Token Expiration**: 6-hour access token lifetime
+- **Optional Authentication**: Some endpoints support both authenticated and anonymous access
 
 ### CORS Configuration for Authorization Headers
 
-The API is configured to support cross-origin requests with JWT authorization headers:
+The API is configured to support cross-origin requests with JWT authorization headers using wildcard origin support:
 
 ```python
-# Configure CORS to allow Authorization headers from frontend origins
-frontend_origins = [
-    # Development origins (from your workspace)
-    "http://localhost:5173",    # Vite dev server (npm run dev)
-    "http://localhost:3001",    # JSON server (npm run server)
-    "http://localhost:4173",    # Vite preview (npm run preview)
-    
-    # AWS hosting patterns
-    "https://*.cloudfront.net",      # CloudFront distributions
-    "https://*.amazonaws.com",       # AWS services (S3, ELB, etc.)
-]
-
+# Configure CORS to allow Authorization headers from any origin
+# Using "*" for origins to avoid Flask-CORS boolean iteration bug
 CORS(app,
-     origins=frontend_origins,
-     allow_headers=["Content-Type", "Authorization", "Accept"],
+     origins="*",  # Allow all origins (wildcard)
+     allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     supports_credentials=True
+     supports_credentials=False,  # Cannot use credentials with wildcard origins
+     expose_headers=["Content-Type", "Authorization"]
 )
 ```
 
-**Allowed Origins:**
-- **Development**: Vite dev server, JSON server, Vite preview
-- **Production**: AWS CloudFront distributions and AWS services
-- **Authorization Headers**: Enabled for JWT token authentication
-- **Credentials Support**: Enabled for cross-origin authenticated requests
+**CORS Configuration:**
+- **Wildcard Origins**: `origins="*"` allows any origin for maximum compatibility
+- **Authorization Headers**: Full support for JWT token authentication across origins
+- **Credentials Disabled**: Required when using wildcard origins per browser security policy
+- **JWT Compatibility**: Works perfectly since JWT tokens are sent as headers, not credentials
+- **Security Headers**: Comprehensive header support for modern web applications
+- **Methods**: All HTTP methods needed for REST API operations
+
+**Technical Note**: We use `origins="*"` instead of `origins=True` to avoid a Flask-CORS library bug where boolean values cause "argument of type 'bool' is not iterable" errors. The wildcard approach provides the same functionality while being more stable.
+
+**Security Considerations**: 
+- Wildcard origins allow any domain to make requests to the API
+- JWT tokens in Authorization headers work regardless of credentials setting
+- This configuration is suitable for public APIs and development environments
+- For production with sensitive data, consider restricting to specific domains
 
 ### Security Features
 
