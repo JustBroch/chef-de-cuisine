@@ -33,7 +33,7 @@ const router = createBrowserRouter([
           favHeaders.append("Authorization", `Bearer ${token}`);
 
           // get users favourites
-          const response = await fetch(`${baseurl}/api/v1/favorites/`, {
+          const response = await fetch(`${baseurl}/api/v1/favorites`, {
             method: "GET",
             headers: favHeaders,
           });
@@ -58,7 +58,7 @@ const router = createBrowserRouter([
           // get recipe details and users favourites
           const [recipeResponse, favResponse] = await Promise.all([
             fetch(`${baseurl}/api/v1/recipes/${id}`),
-            fetch(`${baseurl}/api/v1/favorites/`, {
+            fetch(`${baseurl}/api/v1/favorites`, {
               method: "GET",
               headers: favHeaders,
             }),
@@ -83,14 +83,14 @@ const router = createBrowserRouter([
           if (action === "add") {
             favHeaders.append("Authorization", `Bearer ${token}`);
             favHeaders.append("Content-Type", "application/json");
-            await fetch(`${baseurl}/api/v1/favourites`, {
+            await fetch(`${baseurl}/api/v1/favorites`, {
               method: "POST",
               body: JSON.stringify({ recipeId: `${recipeId}` }),
               headers: favHeaders,
             });
           } else if (action === "remove") {
             favHeaders.append("Authorization", `Bearer ${token}`);
-            await fetch(`${baseurl}/favourites/${recipeId}`, {
+            await fetch(`${baseurl}/favorites/${recipeId}`, {
               method: "DELETE",
               headers: favHeaders,
             });
