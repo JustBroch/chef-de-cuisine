@@ -202,13 +202,45 @@ access_token = create_access_token(identity=user.id)
 @jwt_required(optional=True)  # Optional
 ```
 
+### CORS Configuration for Authorization Headers
+
+The API is configured to support cross-origin requests with JWT authorization headers:
+
+```python
+# Configure CORS to allow Authorization headers from frontend origins
+frontend_origins = [
+    # Development origins (from your workspace)
+    "http://localhost:5173",    # Vite dev server (npm run dev)
+    "http://localhost:3001",    # JSON server (npm run server)
+    "http://localhost:4173",    # Vite preview (npm run preview)
+    
+    # AWS hosting patterns
+    "https://*.cloudfront.net",      # CloudFront distributions
+    "https://*.amazonaws.com",       # AWS services (S3, ELB, etc.)
+]
+
+CORS(app,
+     origins=frontend_origins,
+     allow_headers=["Content-Type", "Authorization", "Accept"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     supports_credentials=True
+)
+```
+
+**Allowed Origins:**
+- **Development**: Vite dev server, JSON server, Vite preview
+- **Production**: AWS CloudFront distributions and AWS services
+- **Authorization Headers**: Enabled for JWT token authentication
+- **Credentials Support**: Enabled for cross-origin authenticated requests
+
 ### Security Features
 
 1. **Password Hashing**: PBKDF2 with salt
 2. **JWT Tokens**: 6-hour expiration
 3. **Input Validation**: Required field validation
 4. **SQL Injection Protection**: SQLAlchemy ORM
-5. **Graceful Error Handling**: No sensitive data leakage
+5. **CORS Security**: Restricted origins with authorization header support
+6. **Graceful Error Handling**: No sensitive data leakage
 
 ## Error Handling & Resilience
 
@@ -399,9 +431,66 @@ curl -X POST http://localhost:5000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "test", "password": "password"}'
 
-# Use token
+# Response: {"access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...", "message": "Login successful"}
+
+# Use token in subsequent requests
 curl http://localhost:5000/api/v1/users/me \
-  -H "Authorization: Bearer <jwt-token>"
+  -H "Authorization: Bearer <jwt-token>" \
+  -H "Content-Type: application/json"
+
+# Get user's favorites (requires authentication)
+curl http://localhost:5000/api/v1/favorites \
+  -H "Authorization: Bearer <jwt-token>" \
+  -H "Content-Type: application/json"
+
+# Add recipe to favorites (requires authentication)
+curl -X POST http://localhost:5000/api/v1/favorites \
+  -H "Authorization: Bearer <jwt-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"recipe_id": 1}'
+
+# Remove from favorites (requires authentication)
+curl -X DELETE http://localhost:5000/api/v1/favorites/1 \
+  -H "Authorization: Bearer <jwt-token>" \
+  -H "Content-Type: application/json"
+```
+
+### Cross-Origin Request Examples
+
+From frontend (JavaScript):
+
+```javascript
+// Login and store token
+const loginResponse = await fetch('http://localhost:5000/api/v1/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    username: 'test',
+    password: 'password'
+  })
+});
+const { access_token } = await loginResponse.json();
+
+// Use token in authenticated requests
+const userResponse = await fetch('http://localhost:5000/api/v1/users/me', {
+  headers: {
+    'Authorization': `Bearer ${access_token}`,
+    'Content-Type': 'application/json'
+  }
+});
+const userData = await userResponse.json();
+
+// Add to favorites
+const favoriteResponse = await fetch('http://localhost:5000/api/v1/favorites', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${access_token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ recipe_id: 1 })
+});
 ```
 
 ## Deployment Architecture

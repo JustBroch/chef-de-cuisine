@@ -63,8 +63,25 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=6)  # Token expiration 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 
-# Enable CORS for all routes and origins
-CORS(app)
+# Configure CORS to allow Authorization headers from frontend origins
+frontend_origins = [
+    # Development origins (from your workspace)
+    "http://localhost:5173",    # Vite dev server (npm run dev)
+    "http://localhost:3001",    # JSON server (npm run server)
+    "http://localhost:4173",    # Vite preview (npm run preview)
+    
+    # AWS hosting patterns
+    "https://*.cloudfront.net",      # CloudFront distributions
+    "https://*.amazonaws.com",       # AWS services (S3, ELB, etc.)
+]
+
+# Enable CORS with authorization header support
+CORS(app,
+     origins=frontend_origins,
+     allow_headers=["Content-Type", "Authorization", "Accept"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     supports_credentials=True
+)
 
 # ---------------------------------------------------------------------------
 # Database Models
