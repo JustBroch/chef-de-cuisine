@@ -122,13 +122,14 @@ const Navbar1 = ({
         },
       ],
     },
+
     {
-      title: "Pricing",
-      url: "#",
+      title: "Recipe Filters",
+      url: "/recipes/filter/",
     },
     {
-      title: "Blog",
-      url: "#",
+      title: "User Profile",
+      url: "/user",
     },
   ],
   auth = {
