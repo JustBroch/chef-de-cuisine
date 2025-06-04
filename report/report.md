@@ -2,7 +2,7 @@
 
 ## Abstract: Summarise the key points of your document.
 
-## Proposal Changes: Describe and justify any changes made to the project from what was outlined in the proposal.
+## Proposal Changes:
 
 You can view the original proposal here: https://github.com/CSSE6400/project-proposal-2025/blob/main/s4955583/proposal.md
 
@@ -15,17 +15,27 @@ The reasons to exclude the other attributes are as follows:
 
 **1. Deployability**
 
+While cloud deployment and continuous integration are beneficial practices, they are delivery-level concerns that have less to do with the core system functionality. However, these concerns are indirectly addressed through our emphasis on scalability. 
+
 **2. Maintainability**
+
+Although it is crucial for long-term sustainaibility of the project, it was excluded due to the team's primary focus on the development and implementation of the core system features.
 
 **3. Modularity**
 
+Modularity primarily supports extensibilty, which has already been identified as one of the most important quality attributes. Thus, listing it separately would have been redundant.
+
 **4. Reliabilty**
+
+In the context of our systemt, it overlaped with availabilty. Ensuring system accessibility during peak usage periods implies the system is reliable.
 
 **5. Security**
 
-**6. Testability**
+Since the current MVP stage does not involve the handling of any sensitive user data, it is not considered a priority.
 
 This refinement ensures that the architectural and development decisions remain focused and aligned with the MVP.
+
+Furthermore, evaluation plan was also revised according to our decision of the key quality attributes.
 
 ## Architecture Options
 
@@ -78,7 +88,7 @@ As a team, we have discussed and investigated different software architectures s
 
 With the selected quality attributes from earlier project planning, a microservices architecture accomodates the given criteria the best as we're prioritising independent scaling, collaborative teamwork for a small team and smoother application operation.
 
-## Architecture: Describe the MVP’s software architecture in detail.
+## Architecture:
 
 Our application consists of multiple serivces designed to specialise to handle specific functionality independently.
 
