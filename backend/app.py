@@ -17,18 +17,14 @@ Architecture:
 
 import json
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Any, Dict, List
+import jwt
+from functools import wraps
 
 from flask import Flask, jsonify, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_jwt_extended import (
-    JWTManager,
-    create_access_token,
-    get_jwt_identity,
-    jwt_required,
-)
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # ---------------------------------------------------------------------------
@@ -61,15 +57,59 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=6)  # Token expiration 
 
 # Initialize Flask extensions
 db = SQLAlchemy(app)
-jwt = JWTManager(app)
 
-# Configure CORS to handle Authorization headers with dynamic origin support
-# This allows any origin while supporting credentials for authenticated routes
+# Custom JWT utility functions (replacing Flask-JWT-Extended)
+def create_access_token(identity):
+    """Create a JWT access token with user identity."""
+    payload = {
+        'user_id': identity,
+        'exp': datetime.utcnow() + app.config["JWT_ACCESS_TOKEN_EXPIRES"],
+        'iat': datetime.utcnow()
+    }
+    return jwt.encode(payload, app.config["JWT_SECRET_KEY"], algorithm='HS256')
+
+def decode_token(token):
+    """Decode and validate a JWT token."""
+    try:
+        payload = jwt.decode(token, app.config["JWT_SECRET_KEY"], algorithms=['HS256'])
+        return payload
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
+def get_jwt_identity():
+    """Get the current user identity from JWT token."""
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return None
+    
+    try:
+        token = auth_header.split(' ')[1]  # Remove 'Bearer ' prefix
+        payload = decode_token(token)
+        if payload:
+            return payload['user_id']
+        return None
+    except (IndexError, KeyError):
+        return None
+
+def jwt_required(optional=False):
+    """Decorator to require JWT authentication."""
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            user_id = get_jwt_identity()
+            if user_id is None and not optional:
+                return jsonify({'message': 'Token missing or invalid'}), 401
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+# Configure CORS to handle Authorization headers leniently
 CORS(app,
-     origins=True,  # Allow any origin dynamically
+     origins="*",
      allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     supports_credentials=True,  # Required for Authorization headers
      expose_headers=["Content-Type", "Authorization"]
 )
 
