@@ -8,7 +8,6 @@ import { HomePage } from "./pages/HomePage";
 import { SearchLayout } from "./layouts/SearchLayout";
 import { ErrorPage } from "./pages/ErrorPage";
 
-//const baseurl = "http://localhost:5000";
 const baseurl =
   "http://chefdecuisine-alb-1272383064.us-east-1.elb.amazonaws.com";
 const router = createBrowserRouter([
@@ -32,14 +31,23 @@ const router = createBrowserRouter([
           const favHeaders = new Headers();
           favHeaders.append("Authorization", `Bearer ${token}`);
 
-          // get users favourites
-          const response = await fetch(`${baseurl}/api/v1/favorites`, {
-            method: "GET",
-            headers: favHeaders,
-          });
+          // get recipe details and users favourites
+          const [userResponse, favResponse] = await Promise.all([
+            fetch(`${baseurl}/api/v1/users/me`, {
+              method: "GET",
+              headers: favHeaders,
+            }),
+            fetch(`${baseurl}/api/v1/favorites`, {
+              method: "GET",
+              headers: favHeaders,
+            }),
+          ]);
 
-          const data = (await response.json()) as unknown;
-          return data;
+          // receive response
+          const userDetails = (await userResponse.json()) as unknown;
+          const favs = (await favResponse.json()) as unknown;
+
+          return { userDetails, favs };
         },
       },
       {
@@ -55,20 +63,28 @@ const router = createBrowserRouter([
           const favHeaders = new Headers();
           favHeaders.append("Authorization", `Bearer ${token}`);
 
-          // get recipe details and users favourites
-          const [recipeResponse, favResponse] = await Promise.all([
-            fetch(`${baseurl}/api/v1/recipes/${id}`),
-            fetch(`${baseurl}/api/v1/favorites`, {
-              method: "GET",
-              headers: favHeaders,
-            }),
-          ]);
+          if (token) {
+            // get recipe details and users favourites
+            const [recipeResponse, favResponse] = await Promise.all([
+              fetch(`${baseurl}/api/v1/recipes/${id}`),
+              fetch(`${baseurl}/api/v1/favorites`, {
+                method: "GET",
+                headers: favHeaders,
+              }),
+            ]);
+            // receive response
+            const recipe = (await recipeResponse.json()) as unknown;
+            const favs = (await favResponse.json()) as unknown;
 
-          // receive response
-          const favs = (await recipeResponse.json()) as unknown;
-          const data = (await favResponse.json()) as unknown;
-
-          return { data, favs };
+            return { recipe, favs };
+          } else {
+            // user not logged in
+            const recipeResponse = await fetch(
+              `${baseurl}/api/v1/recipes/${id}`
+            );
+            const recipe = (await recipeResponse.json()) as unknown;
+            return { recipe };
+          }
         },
         action: async ({ request }) => {
           const formData = await request.formData();
@@ -77,6 +93,7 @@ const router = createBrowserRouter([
           const recipeId = formData.get("recipeId");
           const action = formData.get("action");
           const token = localStorage.getItem("jwtToken");
+
           const favHeaders = new Headers();
 
           // Logic to add/remove favorite
@@ -85,12 +102,12 @@ const router = createBrowserRouter([
             favHeaders.append("Content-Type", "application/json");
             await fetch(`${baseurl}/api/v1/favorites`, {
               method: "POST",
-              body: JSON.stringify({ recipeId: `${recipeId}` }),
+              body: JSON.stringify({ recipe_id: `${recipeId}` }),
               headers: favHeaders,
             });
           } else if (action === "remove") {
             favHeaders.append("Authorization", `Bearer ${token}`);
-            await fetch(`${baseurl}/favorites/${recipeId}`, {
+            await fetch(`${baseurl}/api/v1/favorites/${recipeId}`, {
               method: "DELETE",
               headers: favHeaders,
             });
