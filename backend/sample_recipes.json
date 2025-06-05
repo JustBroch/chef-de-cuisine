@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Pasta Carbonara",
+    "description": "Classic Italian pasta dish with eggs, cheese, and pancetta",
+    "time": 30,
+    "cuisine": "Italian",
+    "difficulty": "medium",
+    "tools": ["pan", "pot", "whisk"],
+    "ingredients": ["pasta", "eggs", "parmesan", "pancetta", "black pepper"],
+    "taste": ["savory", "creamy", "rich"]
+  },
+  {
+    "name": "Chicken Stir Fry",
+    "description": "Quick and healthy Asian-inspired dish",
+    "time": 20,
+    "cuisine": "Asian",
+    "difficulty": "easy",
+    "tools": ["wok", "spatula"],
+    "ingredients": ["chicken", "vegetables", "soy sauce", "ginger", "garlic"],
+    "taste": ["savory", "fresh", "umami"]
+  },
+  {
+    "name": "Chocolate Cake",
+    "description": "Rich and moist chocolate cake",
+    "time": 90,
+    "cuisine": "American",
+    "difficulty": "hard",
+    "tools": ["mixer", "oven", "cake pan"],
+    "ingredients": ["flour", "chocolate", "eggs", "butter", "sugar"],
+    "taste": ["sweet", "rich", "chocolatey"]
+  },
+  {
+    "name": "Chicken Curry",
+    "description": "Spicy and aromatic Indian curry",
+    "time": 45,
+    "cuisine": "Indian",
+    "difficulty": "medium",
+    "tools": ["pot", "stove"],
+    "ingredients": ["chicken", "coconut milk", "curry powder", "onions", "tomatoes"],
+    "taste": ["spicy", "aromatic", "creamy"]
+  },
+  {
+    "name": "Caesar Salad",
+    "description": "Fresh romaine lettuce with Caesar dressing",
+    "time": 15,
+    "cuisine": "American",
+    "difficulty": "easy",
+    "tools": ["bowl", "whisk"],
+    "ingredients": ["romaine lettuce", "parmesan", "croutons", "caesar dressing"],
+    "taste": ["fresh", "tangy", "crisp"]
+  },
+  {
+    "name": "Beef Tacos",
+    "description": "Mexican-style beef tacos with fresh toppings",
+    "time": 25,
+    "cuisine": "Mexican",
+    "difficulty": "easy",
+    "tools": ["pan", "stove"],
+    "ingredients": ["ground beef", "taco shells", "lettuce", "cheese", "tomatoes"],
+    "taste": ["savory", "spicy", "fresh"]
+  },
+  {
+    "name": "Sushi Roll",
+    "description": "Traditional Japanese sushi with fresh fish",
+    "time": 60,
+    "cuisine": "Japanese",
+    "difficulty": "hard",
+    "tools": ["bamboo mat", "rice cooker"],
+    "ingredients": ["sushi rice", "nori", "fresh fish", "cucumber", "avocado"],
+    "taste": ["fresh", "umami", "delicate"]
+  },
+  {
+    "name": "French Toast",
+    "description": "Classic breakfast with cinnamon and vanilla",
+    "time": 15,
+    "cuisine": "French",
+    "difficulty": "easy",
+    "tools": ["pan", "whisk"],
+    "ingredients": ["bread", "eggs", "milk", "cinnamon", "vanilla"],
+    "taste": ["sweet", "warm", "comforting"]
+  }
+] 
