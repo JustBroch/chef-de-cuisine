@@ -173,7 +173,7 @@ From the 'Architecture Options' section, below is a summary of the trade-offs we
 
 ## Evaluation: Summarise testing results and justify how well the software achieves its quality attributes.
 
-## Reflection: Lessons learnt and what you would do differently.
+## Reflection
 
 This project was a valuable learning experience, both technically and collaborative teamwork. Over the course of building and deploying our Chef de Cuisine application using a microservices architecture, we encountered a range of challenges and opportunities that shaped our understanding of modern software development practices, cloud deployment, and team-based problem-solving.
 
