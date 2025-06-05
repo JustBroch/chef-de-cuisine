@@ -2,30 +2,49 @@
 
 ## Abstract: Summarise the key points of your document.
 
-## Proposal Changes: Describe and justify any changes made to the project from what was outlined in the proposal.
+## Proposal Changes
 
-You can view the original proposal here: https://github.com/CSSE6400/project-proposal-2025/blob/main/s4955583/proposal.md
+*View the original proposal here:* https://github.com/CSSE6400/project-proposal-2025/blob/main/s4955583/proposal.md
 
-There were no changes made to the core functionality of the Minimum Viable Product (MVP). The project's focus is to deliver all MVP 
-features as planned in the original proposal.
-
-However, after a close review during team discussions, it was identified that many quality attributes lacked sufficient justification or relevance to the goals of the project at its current stage. As a result, the team mutually agreed to refine the quality attributes to include only the three most critical and applicable characterisitics: Availability, Extensibility and Scalability. These attributes were selected based on their direct impact on the system's reliability, long-term adaptibility and capacity to serve users efficiently under varying loads.
+There were no changes made to the core functionality of the Minimum Viable Product (MVP). The project's focus is to deliver all MVP features as planned in the original proposal. However, after a close review during team discussions, it was identified that many quality attributes lacked sufficient justification or relevance to the goals of the project at its current stage. As a result, the team mutually agreed to refine the quality attributes to include only the three most critical and applicable characterisitics which are; Availability, Extensibility and Scalability. These attributes were selected based on their direct impact on the system's reliability, long-term adaptibility and capacity to serve users efficiently under varying loads.
 
 The reasons to exclude the other attributes are as follows:
 
-**1. Deployability**
+- Deployability
 
-**2. Maintainability**
+    - When completing the MVP, deployability doesn't become enough of a bottleneck to our workflow and deployment. At this stage, manual deployment is acceptable since we're focused on running core features reliably at scale.
 
-**3. Modularity**
+    - More advanced deployment strategies (which are out of scope for this course) are not worth the investment and the opportunity cost.
 
-**4. Reliabilty**
+- Maintainability
 
-**5. Security**
+    - Our codebase is relatively small with 6 contributors total. At a larger scale with several more contributors, maintainability would become critical for future development.
 
-**6. Testability**
+    - Rapid development at a small scale is a much higher priority.
 
-This refinement ensures that the architectural and development decisions remain focused and aligned with the MVP.
+- Modularity
+
+    - Modularity gets intertwined with extensibility to some degree since we're using a microservices architecture. Each service is its own modular component.
+
+    - Overengineering for modularity would slow down development when time is already scarce.
+
+- Reliabilty
+
+    - Availability often overlaps with reliability so occassional downtime is tolerable especially outside of lunch and dinner hours. These hours are generally used for site maintenance as traffic is very low.
+
+    - Full-blown fault tolerance and redundancy measures are usually deferred post-MVP stages and closer to a full release.
+
+- Security
+
+    - At this stage, the amount of sensitive data exposure is extremely minimal. We acknowledge security to be important in almost any application but the additional complexities that arise are not worth it for the MVP.
+
+    - Placeholder security measures such as static JWT tokens are sufficient for testing purposes until it becomes available to the public.
+
+- Testability
+
+    - Our testing suite only covers critical flows we expect a user to follow. Building a full, robust test suite is time consuming and slows down development. However, we have compiled a small testing suite in isolation using mock accounts.
+
+Overall, these refinements ensures that the architectural and development decisions remain focused and aligned with the MVP along with considering the available time left in the project.
 
 ## Architecture Options
 
@@ -35,7 +54,7 @@ As a team, we have discussed and investigated different software architectures s
 
 | Pros | Cons |
 | :- | :- |
-| Easier to develop, test, and deploy as a single unit. Conceptually simpler. | Can only be scaled as a whole, not by component. |
+| Easier to develop, test, and deploy as a single unit. Conceptually simpler. | Can only be scaled as a whole rather than by component. |
 | In-process calls are faster than inter-service communication. | Small changes may require redeploying the whole system. |
 | Easier to set up with common IDEs, debuggers, and profilers. | Becomes very complex and fragile as it grows. |
 | Easier to manage ACID transactions across components. | A bug in one part can affect the entire application. |
@@ -53,10 +72,10 @@ As a team, we have discussed and investigated different software architectures s
 
 | Pros | Cons |
 | :- | :- |
-| Services can be updated and scaled independently. | Requires complex service orchestration, service discovery, and monitoring. |
-| Teams can use different languages or frameworks per service. | Network latency, consistency, and eventual failure handling become critical. |
+| Services can be updated and scaled independently. | Requires complex service orchestration, service discovery and monitoring. |
+| Teams can use different languages or frameworks per service. | Network latency, consistency and failure handling become critical. |
 | Failure in one service is unlikely to crash the entire system. | Transactions across services are hard to implement. |
-| Maps well to small, autonomous dev teams. | Requires advanced CI/CD, monitoring, and testing practices to ensure reliability. |
+| Maps well to small, autonomous dev teams. | Requires more complex CI/CD, monitoring, and testing practices to ensure reliability. |
 
 **Event-Driven**
 
@@ -78,23 +97,29 @@ As a team, we have discussed and investigated different software architectures s
 
 With the selected quality attributes from earlier project planning, a microservices architecture accomodates the given criteria the best as we're prioritising independent scaling, collaborative teamwork for a small team and smoother application operation.
 
-## Architecture: Describe the MVP’s software architecture in detail.
+## Architecture
 
 Our application consists of multiple serivces designed to specialise to handle specific functionality independently.
 
 The MVP consists of 3 services:
+
 - Search Service
+
     - Search recipes by name using keywords or phrases.
+
 - Filter Service
+
     - Search recipes using recipe attributes (ingredients list, rating, cooking time, etc.).
+
 - User Service
+
     - Manage user details, preferences and favourite recipes.
 
-Services communicate to one another synchronously using the RESTAPI framework over HTTP. For this application, requests are simpler and a single request doesn't place high loads on the system. The backend REST API is written in Python using Flask, PostgreSQL as our database and Docker for containerisation. The frontend UI elements are written in TypeScript. Using AWS ECS (Fargate) and ECR, we deployed each service as a docker image to the cloud. AWS autoscaling with an application load balancer (ALB) handles the balance between resource usage and site traffic. Each service scales independently to cater for it's own load.
+Services communicate to one another synchronously using the REST API framework over HTTP. For this application, requests are simpler and a single request doesn't place high loads on the system. The backend REST API is written in Python using Flask, PostgreSQL as our database and Docker for containerisation. The frontend UI elements are written in TypeScript. Using AWS ECS (Fargate) and ECR, we deployed each service as a docker image to the cloud. AWS autoscaling with an application load balancer (ALB) handles the balance between resource usage and site traffic. Each service scales independently to cater for it's own load.
 
 Authentication is handled using a JWT token across services for accessing the API in a secure manner to ensure user-entered data is well-formed and the intent is not malicious. During use, if a service becomes unhealthy for an unknown reason, it will attempt to restart which may take some time (in the order of minutes). All actions are monitored and logged using AWS CloudWatch with alarms for scaling purposes.
 
-There are 2 PostgreSQL databases, one for recipes and the other for users. Keeping the databases separate allows each service to only access the information it requires. If a service becomes unhealthy, it reduces the likelihood of data becoming lost which may result in frustration from the user and a poor user experience.
+There are 2 PostgreSQL databases, one for recipes and the other for users. Keeping the databases separate allows each service to only access the information it requires. In the event a service becomes unhealthy, it reduces the likelihood of data becoming lost which may result in user frustration and a poor user experience.
 
 **Architecture Diagram**
 
@@ -104,7 +129,45 @@ There are 2 PostgreSQL databases, one for recipes and the other for users. Keepi
 
 ![alt text](component_diagram.png)
 
-## Trade-Offs: Describe and justify the trade-offs made in designing the architecture.
+## Trade-Offs
+
+From the 'Architecture Options' section, below is a summary of the trade-offs we considered collectively when designing our architecture.
+
+- Requires complex service orchestration, service discovery, and monitoring.
+
+    - While orchestration and monitoring add overall complexity during development, they directly enable independent service scaling and deployment, which is essential for a microservices architecture.
+    
+    - This allows our application to have more autonomy and be scalable which meets one of our core quality attributes.
+
+- Network latency, consistency, and failure handling become critical.
+
+    - As our application is not super time sensitive, the additional network latency is acceptable without negatively affecting the user experience in a significant manner.
+
+    - Eventual consistency is a necessary trade-off for scalability and service decoupling. By accepting some small delay is data propagation, the system becomes more robust and scalable.
+
+    - An example of this is when a new recipe gets added and shows up in search shortly after it's added.
+
+- Data synchronisation and consistency is difficult to manage when accessing newly added recipes.
+
+    - Instead of using 1 universal shared database, using multiple smaller databases allows each service type to only access the data it needs. This reduces the likelihood of malformed data written to the database.
+
+    - When a service becomes unhealthy, data could be lost/corrupted. This reduces the severity of data loss to be more recoverable/retrievable and becomes more secure from attacks (like a data breach).
+
+    - The user database is the most important as it contains the most user sensitive information so having that separate from the recipe database reduces the number of accesses and in the event something does occur, it will be easier to find the root cause. 
+
+- Debugging inter-service related issues is much more difficult and requires more time.
+
+    - The system as a whole gains fault isolation but it becomes more difficult to debug as traces are generally spread around different services. Centralised logging tools like AWS CloudWatch help mitigate this tradeoff to find root-causes.
+
+    - Clear API contracts (the expected input and output) provide better observability and long-term reliability for easier maintenance and faster root-cause analysis.
+
+- Requires more complex CI/CD, monitoring, and testing practices to ensure reliability.
+
+    - Setting up complex CI/CD piplines is time consuming and can consume more budget at the start of a project. However, it enforces discipline and motivation which in turn improves reliability and speeds up releases in the long term. This allows for faster future development at the cost of slower present development.
+
+    - If the CI/CD pipline isn't set up correctly, the microservice won't deploy properly which would lead to more problems. Generally, it's a more high risk, high reward situation.
+
+    - For the MVP, this isn't so critical as we haven't implemented any complex monitoring or testing systems. However, having a microservices architecture makes the need more visible in the future.
 
 ## Critique: Describe how well the architecture supports delivering the complete system.
 
