@@ -1,0 +1,38 @@
+import { useLoaderData, useSearchParams, Link } from "react-router";
+import { assertIsRecipesResult } from "../types.tsx";
+
+export function SearchPage() {
+  const results = useLoaderData();
+  assertIsRecipesResult(results);
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query") || "";
+
+  return (
+    <>
+      <div>
+        <h2 className="text-left text-xl mt-3">
+          Search Results for "{query}":
+        </h2>
+        {results?.recipes.length === 0 ? (
+          <p> No results</p>
+        ) : (
+          <ul className="text-left mt-3">
+            {results.recipes.map((result) => (
+              <li key={result.id}>
+                <h3>
+                  <Link
+                    to={`/recipes/${result.id}`}
+                    className="hover: underline"
+                  >
+                    {result.name}
+                  </Link>
+                </h3>
+                <p>{result.description}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
+  );
+}
