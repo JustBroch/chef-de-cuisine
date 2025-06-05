@@ -62,25 +62,6 @@ export function RecipePage() {
           <li key={index}>{ingredient}</li>
         ))}
       </ul>
-      <h2 className="text-left text-xl mt-3">Ingredient Preparation:</h2>
-      <ul className="text-left ml-5 list-disc mt-3">
-        {/* 
-        {recipe.ingredients_preparation.split(",").map((prep, index) => (
-          <li key={index}>{prep}</li>
-        ))}
-        */}
-      </ul>
-      <h2 className="text-left text-xl mt-3">Instructions:</h2>
-      <ol className="text-left ml-5 list-decimal mt-3">
-        {/* 
-        {recipe.steps
-          .split(".")
-          .slice(0, -1)
-          .map((step, index) => (
-            <li key={index}>{step}.</li>
-          ))}
-            */}
-      </ol>
       <h2 className="text-left text-xl mt-3">
         Difficulty: {recipe.difficulty}
       </h2>
