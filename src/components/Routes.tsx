@@ -1,7 +1,14 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
+import {
+  createBrowserRouter,
+  redirect,
+  RouterProvider,
+  useNavigate,
+} from "react-router";
 import { SearchPage } from "./pages/SearchPage";
 import { FilterPage } from "./pages/FilterPage";
 import { RecipePage } from "./pages/RecipePage";
+import { LoginPage } from "./pages/LoginPage";
+import { RegistrationPage } from "./pages/RegistrationPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
 import App from "../App";
 import { HomePage } from "./pages/HomePage";
@@ -19,6 +26,32 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: HomePage,
+      },
+
+      {
+        path: "register",
+        Component: RegistrationPage,
+        action: async ({ request }) => {
+          const formData = await request.formData();
+
+          const registration = Object.fromEntries(formData);
+          console.log(registration);
+          const username = registration.username;
+          const email = registration.email;
+          const password = registration.password;
+          const regHeaders = new Headers();
+          regHeaders.append("Content-Type", "application/json");
+          await fetch(`${baseurl}/api/v1/auth/register`, {
+            method: "POST",
+            body: JSON.stringify({
+              username: `${username}`,
+              email: `${email}`,
+              password: `${password}`,
+            }),
+            headers: regHeaders,
+          });
+          return redirect("/login");
+        },
       },
       {
         path: "user/",
@@ -117,6 +150,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   {
     Component: SearchLayout,
     children: [
@@ -182,6 +216,36 @@ const router = createBrowserRouter([
             `${baseurl}/api/v1/recipes/filter?${params.toString()}`
           );
           const data = (await response.json()) as unknown;
+          return data;
+        },
+      },
+      {
+        path: "login",
+        Component: LoginPage,
+        action: async ({ request }) => {
+          const formData = await request.formData();
+          const login = Object.fromEntries(formData);
+          const username = login.username;
+          const password = login.password;
+          const loginHeaders = new Headers();
+          loginHeaders.append("Content-Type", "application/json");
+          const response = await fetch(`${baseurl}/api/v1/auth/login`, {
+            method: "POST",
+            body: JSON.stringify({
+              username: `${username}`,
+              password: `${password}`,
+            }),
+            headers: loginHeaders,
+          });
+          const data = (await response.json()) as unknown;
+          console.log(data);
+          if (data.access_token) {
+            localStorage.setItem("jwtToken", data.access_token);
+          }
+          if (data.message == "Login successful") {
+            console.log("success");
+            return redirect("/");
+          }
           return data;
         },
       },
