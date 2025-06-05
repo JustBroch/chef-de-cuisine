@@ -14,7 +14,7 @@ The reasons to exclude the other attributes are as follows:
 
     - When completing the MVP, deployability doesn't become enough of a bottleneck to our workflow and deployment. At this stage, manual deployment is acceptable since we're focused on running core features reliably at scale.
 
-    - More advanced deployment strategies (which are out of scope for this course) are not worth the investment and the opportunity cost.
+    - More advanced deployment strategies (which are out of scope for this course) are not worth the time investment nor the opportunity cost.
 
 - Maintainability
 
@@ -174,3 +174,15 @@ From the 'Architecture Options' section, below is a summary of the trade-offs we
 ## Evaluation: Summarise testing results and justify how well the software achieves its quality attributes.
 
 ## Reflection: Lessons learnt and what you would do differently.
+
+This project was a valuable learning experience, both technically and collaborative teamwork. Over the course of building and deploying our Chef de Cuisine application using a microservices architecture, we encountered a range of challenges and opportunities that shaped our understanding of modern software development practices, cloud deployment, and team-based problem-solving.
+
+One of the key lessons we learnt was the importance of coordination when working on a short-term team project. With multiple services to develop, integrate, and deploy, it became apparent how crucial communication was in avoiding duplication of effort and ensuring alignment on architectural decisions. Early on, we struggled to decide on an architecture to use which delayed our project start. We experienced some friction around responsibilities and timelines, but quickly adapted by becoming more proactive in checking in with each team member and documenting our work in a shared place. By using the backlog, we could assign tasks to ourselves and see what others were working on. This reduced redundant work and help align finished tasks with starting new tasks.
+
+Another significant learning moment came from deploying our application on AWS. Although we were familiar with cloud platforms in theory, deploying a distributed, container-based system in practice brought up a range of unexpected issues. For many of us, this was our first cloud computing course so we were still grasping the fundamentals. This made the deployment process longer than we had originally anticipated. From configuring load balancers and ECS task definitions to debugging security group permissions and health checks, we faced a steep learning curve. These challenges highlighted the importance of observability and infrastructure-as-code — areas we only scratched the surface of. Despite the complexity, resolving these issues taught us resilience and resourcefulness, and the satisfaction of finally seeing the full stack live in production was a rewarding moment for the whole team.
+
+We found our in-person meetups being far more effective than online check-ins. Discussions moved faster, misunderstandings were resolved more easily, and decisions were made more confidently. Progress in these sessions was higher presumably from everyone being in the right state of mind to fully contribute. While remote work has its place, we’d plan for more regular face-to-face sessions, especially during key points like architectural planning, integration, and deployment.
+
+Given another opportunity to approach this project again, one of the first things we’d do differently is start figuring out the important details earlier. Time is already limited in this project so we had to make the most of each day given. We were provided with our repository later than expected and the drama regarding our team's AWS accounts prevented us from getting the headstart we were aiming for. Because much of the deployment work came toward the end, we were time-constrained when debugging and stress-testing our system. Starting the infrastructure setup in parallel with early backend development would have allowed more time for refinement and testing.
+
+Lastly, while our microservices architecture enabled flexibility and separation of concerns, it introduced complexity making some tasks harder than otherwise for an MVP. If the project was smaller in scope, a monolith or layered architecture might have been more pragmatic. However, the architecture choice gave us a realistic taste of challenges we’re likely to encounter in industry-scale projects, and those lessons are invaluable. Furthermore, being able to apply the AWS deployment skills into a practical project helped strengthen our cloud knowledge. The experience strengthened our technical skills and ability to collaborate effectively under pressure. Next time, with earlier setup, more structured collaboration, and lessons from deployment fresh in mind, we believe we could move faster and more confidently through both development and production phases.
