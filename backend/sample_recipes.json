@@ -2,6 +2,7 @@
   {
     "name": "Pasta Carbonara",
     "description": "Classic Italian pasta dish with eggs, cheese, and pancetta",
+    "image_url": "https://www.themealdb.com//images//media//meals//llcbn01574260722.jpg",
     "time": 30,
     "cuisine": "Italian",
     "difficulty": "medium",
@@ -12,6 +13,7 @@
   {
     "name": "Chicken Stir Fry",
     "description": "Quick and healthy Asian-inspired dish",
+    "image_url": "https://www.themealdb.com//images//media//meals//1529444113.jpg",
     "time": 20,
     "cuisine": "Asian",
     "difficulty": "easy",
@@ -22,6 +24,7 @@
   {
     "name": "Chocolate Cake",
     "description": "Rich and moist chocolate cake",
+    "image_url": "https://www.themealdb.com//images//media//meals//qxutws1486978099.jpg",
     "time": 90,
     "cuisine": "American",
     "difficulty": "hard",
@@ -32,6 +35,7 @@
   {
     "name": "Chicken Curry",
     "description": "Spicy and aromatic Indian curry",
+    "image_url": "https://www.themealdb.com//images//media//meals//yxsurp1511304301.jpg",
     "time": 45,
     "cuisine": "Indian",
     "difficulty": "medium",
@@ -42,6 +46,7 @@
   {
     "name": "Caesar Salad",
     "description": "Fresh romaine lettuce with Caesar dressing",
+    "image_url": "https://www.allrecipes.com/thmb/JTW0AIVY5PFxqLrf_-CDzT4OZQY=/0x512/filters:no_upscale():max_bytes(150000):strip_icc()/229063-Classic-Restaurant-Caesar-Salad-ddmfs-4x3-231-89bafa5e54dd4a8c933cf2a5f9f12a6f.jpg",
     "time": 15,
     "cuisine": "American",
     "difficulty": "easy",
@@ -52,6 +57,7 @@
   {
     "name": "Beef Tacos",
     "description": "Mexican-style beef tacos with fresh toppings",
+    "image_url": "https://www.themealdb.com//images//media//meals//uvuyxu1503067369.jpg",
     "time": 25,
     "cuisine": "Mexican",
     "difficulty": "easy",
@@ -62,6 +68,7 @@
   {
     "name": "Sushi Roll",
     "description": "Traditional Japanese sushi with fresh fish",
+    "image_url": "https://www.themealdb.com//images//media//meals//g046bb1663960946.jpg",
     "time": 60,
     "cuisine": "Japanese",
     "difficulty": "hard",
@@ -72,6 +79,7 @@
   {
     "name": "French Toast",
     "description": "Classic breakfast with cinnamon and vanilla",
+    "image_url": "https://www.allrecipes.com/thmb/GHsW45mTpy_2EFSjCNEPdeo7Tek=/0x512/filters:no_upscale():max_bytes(150000):strip_icc()/ALR-recipe-16895-fluffy-french-toast-hero-01-ddmfs-4x3-7fd61e054f2c4f0f868b7ab0dd8767ae.jpg",
     "time": 15,
     "cuisine": "French",
     "difficulty": "easy",

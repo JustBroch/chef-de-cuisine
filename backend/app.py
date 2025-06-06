@@ -677,6 +677,52 @@ def init_database():
         }), 500
 
 
+@app.delete("/api/v1/admin/recipes")
+def delete_all_recipes():
+    """
+    Administrative endpoint to delete all recipes from the database.
+    
+    This endpoint:
+    1. Deletes all recipes from the database
+    2. Also removes all associated favorites (due to CASCADE DELETE)
+    3. Returns count of deleted recipes
+    
+    Returns:
+        200: All recipes deleted successfully
+        500: Database deletion failed
+        
+    Security Note:
+        This is a destructive admin operation. No authentication required
+        for simplicity, but in production should be protected.
+    """
+    try:
+        # Count recipes before deletion
+        recipe_count = Recipe.query.count()
+        
+        if recipe_count == 0:
+            return jsonify({
+                "message": "No recipes to delete",
+                "recipes_deleted": 0
+            }), 200
+        
+        # Delete all recipes (favorites will be deleted automatically due to CASCADE)
+        Recipe.query.delete()
+        db.session.commit()
+        
+        return jsonify({
+            "message": f"Successfully deleted all {recipe_count} recipes",
+            "recipes_deleted": recipe_count
+        }), 200
+        
+    except Exception as e:
+        # Rollback transaction on error
+        db.session.rollback()
+        return jsonify({
+            "error": "Failed to delete recipes",
+            "message": str(e)
+        }), 500
+
+
 @app.get("/api/v1/recipes/<int:recipe_id>")
 @jwt_required(optional=True)
 def get_recipe(recipe_id: int):
@@ -698,6 +744,148 @@ def get_recipe(recipe_id: int):
     except Exception as e:
         # If tables don't exist or other error, return 404
         return jsonify({"message": "Recipe not found"}), 404
+
+
+@app.delete("/api/v1/recipes/<recipe_name>")
+@jwt_required(optional=True)
+def delete_recipe_by_name(recipe_name: str):
+    """
+    Delete a specific recipe by name.
+    
+    Authentication: Optional (for flexibility)
+    
+    Parameters:
+        recipe_name: Name of the recipe to delete (case-insensitive)
+        
+    Returns:
+        200: Recipe deleted successfully
+        404: Recipe not found
+        409: Multiple recipes found with same name
+        500: Database deletion failed
+        
+    Note: This also removes the recipe from all users' favorites
+    due to CASCADE DELETE constraint.
+    """
+    try:
+        # Find recipes with matching name (case-insensitive)
+        recipes = Recipe.query.filter(Recipe.name.ilike(recipe_name)).all()
+        
+        if not recipes:
+            return jsonify({"message": f"Recipe '{recipe_name}' not found"}), 404
+        
+        if len(recipes) > 1:
+            # Multiple recipes with same name found
+            recipe_ids = [r.id for r in recipes]
+            return jsonify({
+                "message": f"Multiple recipes found with name '{recipe_name}'",
+                "recipe_ids": recipe_ids,
+                "suggestion": "Use DELETE /api/v1/recipes/<id> to delete a specific recipe"
+            }), 409
+        
+        # Single recipe found - delete it
+        recipe = recipes[0]
+        recipe_id = recipe.id
+        
+        # Delete the recipe (favorites will be deleted automatically due to CASCADE)
+        db.session.delete(recipe)
+        db.session.commit()
+        
+        return jsonify({
+            "message": f"Recipe '{recipe_name}' deleted successfully",
+            "recipe_id": recipe_id
+        }), 200
+        
+    except Exception as e:
+        # Rollback transaction on error
+        db.session.rollback()
+        return jsonify({
+            "error": "Failed to delete recipe",
+            "message": str(e)
+        }), 500
+
+
+@app.put("/api/v1/recipes/<recipe_name>")
+@jwt_required(optional=True)
+def update_recipe(recipe_name: str):
+    """
+    Update a specific recipe by name.
+    
+    Authentication: Optional (for flexibility)
+    
+    Parameters:
+        recipe_name: Name of the recipe to update (case-insensitive)
+        
+    Request Body (all fields optional):
+        - name: New recipe name
+        - description: Recipe description
+        - image_url: Recipe image URL
+        - time: Cooking time in minutes
+        - cuisine: Cuisine type
+        - difficulty: Difficulty level
+        - tools: Array of required tools
+        - ingredients: Array of ingredients
+        - taste: Array of taste profiles
+        
+    Returns:
+        200: Recipe updated successfully
+        404: Recipe not found
+        409: Multiple recipes found with same name
+        500: Database update failed
+    """
+    try:
+        # Find recipes with matching name (case-insensitive)
+        recipes = Recipe.query.filter(Recipe.name.ilike(recipe_name)).all()
+        
+        if not recipes:
+            return jsonify({"message": f"Recipe '{recipe_name}' not found"}), 404
+        
+        if len(recipes) > 1:
+            # Multiple recipes with same name found
+            recipe_ids = [r.id for r in recipes]
+            return jsonify({
+                "message": f"Multiple recipes found with name '{recipe_name}'",
+                "recipe_ids": recipe_ids,
+                "suggestion": "Recipe names should be unique for updates"
+            }), 409
+        
+        # Single recipe found - update it
+        recipe = recipes[0]
+        data = request.get_json(silent=True) or {}
+        
+        # Update fields if provided in request
+        if "name" in data:
+            recipe.name = data["name"]
+        if "description" in data:
+            recipe.description = data["description"]
+        if "image_url" in data:
+            recipe.image_url = data["image_url"]
+        if "time" in data:
+            recipe.time = data["time"]
+        if "cuisine" in data:
+            recipe.cuisine = data["cuisine"]
+        if "difficulty" in data:
+            recipe.difficulty = data["difficulty"]
+        if "tools" in data:
+            recipe.tools = json.dumps(data["tools"])
+        if "ingredients" in data:
+            recipe.ingredients = json.dumps(data["ingredients"])
+        if "taste" in data:
+            recipe.taste = json.dumps(data["taste"])
+        
+        db.session.commit()
+        
+        return jsonify({
+            "message": f"Recipe '{recipe_name}' updated successfully",
+            "recipe": recipe.to_dict()
+        }), 200
+        
+    except Exception as e:
+        # Rollback transaction on error
+        db.session.rollback()
+        return jsonify({
+            "error": "Failed to update recipe",
+            "message": str(e)
+        }), 500
 
 
 @app.get("/api/v1/recipes/filter")
