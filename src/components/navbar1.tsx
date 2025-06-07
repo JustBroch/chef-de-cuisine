@@ -1,4 +1,5 @@
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import cdclogo from "../assets/logo.png";
 import SearchForm from "./SearchForm";
 import {
   Accordion,
@@ -23,6 +24,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Header } from "@radix-ui/react-accordion";
+
+import React, { useState, useEffect } from "react";
 
 interface MenuItem {
   title: string;
@@ -54,88 +57,45 @@ interface Navbar1Props {
 
 const Navbar1 = ({
   logo = {
-    url: "https://www.youtube.com/watch?v=GBIIQ0kP15E",
-    src: "https://shadcnblocks.com/images/block/logos/shadcnblockscom-icon.svg",
+    url: "/",
+    src: `${cdclogo}`,
     alt: "logo",
     title: "Chef de Cuisine",
   },
   menu = [
     { title: "Home", url: "/" },
     {
-      title: "Recipes",
-      url: "#",
-      items: [
-        {
-          title: "Search Recipes",
-          description: "Search for a recipe",
-          icon: <Book className="size-5 shrink-0" />,
-          url: "/search",
-        },
-        {
-          title: "Company",
-          description: "Our mission is to innovate and empower the world",
-          icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Careers",
-          description: "Browse job listing and discover our workspace",
-          icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Support",
-          description:
-            "Get in touch with our support team or visit our community forums",
-          icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
-        },
-      ],
+      title: "Recipe Filters",
+      url: "/recipes/filter/",
     },
     {
-      title: "About",
-      url: "#",
-      items: [
-        {
-          title: "Help Center",
-          description: "Get all the answers you need right here",
-          icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Contact Us",
-          description: "We are here to help you with any questions you have",
-          icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Status",
-          description: "Check the current status of our services and APIs",
-          icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Terms of Service",
-          description: "Our terms and conditions for using our services",
-          icon: <Book className="size-5 shrink-0" />,
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Pricing",
-      url: "#",
-    },
-    {
-      title: "Blog",
-      url: "#",
+      title: "User Profile",
+      url: "/user",
     },
   ],
   auth = {
-    login: { title: "Login", url: "#" },
-    signup: { title: "Sign up", url: "#" },
+    login: { title: "Login", url: "/login" },
+    signup: { title: "Sign up", url: "/register" },
   },
 }: Navbar1Props) => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    !!localStorage.getItem("jwtToken")
+  );
+
+  function logout() {
+    localStorage.removeItem("jwtToken");
+    setIsLoggedIn(false);
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
   return (
     <section className="py-4">
       <div className="container">
@@ -152,19 +112,29 @@ const Navbar1 = ({
             <div className="flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
-                  {menu.map((item) => renderMenuItem(item))}
+                  {menu.map((item) => renderMenuItem(item, isLoggedIn))}
                 </NavigationMenuList>
               </NavigationMenu>
               <SearchForm />
             </div>
           </div>
           <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <a href={auth.login.url}>{auth.login.title}</a>
-            </Button>
-            <Button asChild size="sm">
-              <a href={auth.signup.url}>{auth.signup.title}</a>
-            </Button>
+            {isLoggedIn ? (
+              <Button asChild variant="outline" size="sm">
+                <a href="#" onClick={logout}>
+                  Logout
+                </a>
+              </Button>
+            ) : (
+              <>
+                <Button asChild variant="outline" size="sm">
+                  <a href={auth.login.url}>{auth.login.title}</a>
+                </Button>
+                <Button asChild size="sm">
+                  <a href={auth.signup.url}>{auth.signup.title}</a>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
 
@@ -218,7 +188,7 @@ const Navbar1 = ({
   );
 };
 
-const renderMenuItem = (item: MenuItem) => {
+const renderMenuItem = (item: MenuItem, isLoggedIn: boolean) => {
   if (item.items) {
     return (
       <NavigationMenuItem key={item.title}>
@@ -235,14 +205,20 @@ const renderMenuItem = (item: MenuItem) => {
   }
 
   return (
-    <NavigationMenuItem key={item.title}>
-      <NavigationMenuLink
-        href={item.url}
-        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
-      >
-        {item.title}
-      </NavigationMenuLink>
-    </NavigationMenuItem>
+    <>
+      {!isLoggedIn && item.title == "User Profile" ? (
+        <></>
+      ) : (
+        <NavigationMenuItem key={item.title}>
+          <NavigationMenuLink
+            href={item.url}
+            className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
+          >
+            {item.title}
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      )}
+    </>
   );
 };
 

@@ -1,18 +1,14 @@
 export type RecipeData = {
   id: number;
   name: string;
-  prep_time: number;
-  cook_time: number;
-  total_time: number;
-  servings: number;
-  ingredients: string;
+  time: number;
   description: string;
-  rating: number;
-  url: string;
-  cuisine_pat: string;
-  nutrition: object;
-  timing: object;
-  img_src: string;
+  ingredients: string[];
+  taste: string[];
+  tools: string[];
+  cuisine: string;
+  difficulty: string;
+  img_url: string;
 };
 
 export type RecipesResult = {
@@ -41,17 +37,17 @@ export function assertIsRecipeResult(
   if (typeof searchData.name != "string") {
     throw new Error("name is not a string");
   }
-  if (!("total_time" in searchData)) {
-    throw new Error("result has no name");
+  if (!("time" in searchData)) {
+    throw new Error("result has no time");
   }
-  if (typeof searchData.total_time != "string") {
-    throw new Error("total_time is not a string");
+  if (typeof searchData.time != "number") {
+    throw new Error("time is not a number");
   }
-  if (!("ingredients" in searchData)) {
-    throw new Error("result has no ingredients");
+  if (!("difficulty" in searchData)) {
+    throw new Error("result has no difficulty");
   }
-  if (typeof searchData.ingredients != "string") {
-    throw new Error("ingredients is not a string");
+  if (typeof searchData.difficulty != "string") {
+    throw new Error("difficulty is not a string");
   }
   if (!("description" in searchData)) {
     throw new Error("result has no description");
@@ -59,30 +55,63 @@ export function assertIsRecipeResult(
   if (typeof searchData.description != "string") {
     throw new Error("description is not a string");
   }
-  if (!("rating" in searchData)) {
-    throw new Error("result has no rating");
+  //if (!("img_url" in searchData)) {
+  //  throw new Error("result has no img_url");
+  //}
+  //if (typeof searchData.img_url != "string") {
+  //  throw new Error("img_url is not a string");
+  //}
+  if (!("ingredients" in searchData)) {
+    throw new Error("result has no ingredients");
   }
-  if (typeof searchData.rating != "number") {
-    throw new Error("ratings is not a number");
+  if (!Array.isArray(searchData.ingredients)) {
+    throw new Error("result not an array");
   }
-  if (!("img_src" in searchData)) {
-    throw new Error("result has no img_src");
+  searchData.ingredients.forEach((ingredient) => {
+    if (typeof ingredient != "string") {
+      throw new Error("ingredient is not a string");
+    }
+  });
+  if (!("taste" in searchData)) {
+    throw new Error("result has no tastes");
   }
-  if (typeof searchData.img_src != "string") {
-    throw new Error("img_src is not a string");
+  if (!Array.isArray(searchData.taste)) {
+    throw new Error("taste not an array");
   }
+  searchData.taste.forEach((taste) => {
+    if (typeof taste != "string") {
+      throw new Error("ingredient is not a string");
+    }
+  });
+  if (!("tools" in searchData)) {
+    throw new Error("result has no tools");
+  }
+  if (!Array.isArray(searchData.tools)) {
+    throw new Error("taste not an array");
+  }
+  searchData.tools.forEach((tool) => {
+    if (typeof tool != "string") {
+      throw new Error("ingredient is not a string");
+    }
+  });
 }
 
 export function assertIsRecipesResult(
   searchData: unknown
-): asserts searchData is RecipeData[] {
-  if (!Array.isArray(searchData)) {
-    throw new Error("result not an array");
+): asserts searchData is RecipesResult {
+  if (!isObject(searchData)) {
+    throw new Error("result not an object");
   }
-  if (searchData.length === 0) {
+  if (!("recipes" in searchData)) {
+    throw new Error("result has no recipes");
+  }
+  if (!Array.isArray(searchData.recipes)) {
+    throw new Error("recipes not an array");
+  }
+  if (searchData.recipes.length === 0) {
     return;
   }
-  searchData.forEach((result) => {
+  searchData.recipes.forEach((result) => {
     assertIsRecipeResult(result);
   });
 }
