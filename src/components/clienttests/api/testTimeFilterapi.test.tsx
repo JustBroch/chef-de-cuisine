@@ -14,8 +14,7 @@ const baseurl =
   "http://chefdecuisine-alb-1272383064.us-east-1.elb.amazonaws.com";
 
 /* 
-Test to check filter page component displays received json correctly
-Real api call 
+Test to check filter page component displays received json correctly with real api
 */
 
 test("app page", async () => {

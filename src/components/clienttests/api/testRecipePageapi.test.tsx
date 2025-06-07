@@ -12,7 +12,7 @@ const baseurl =
   "http://chefdecuisine-alb-1272383064.us-east-1.elb.amazonaws.com";
 
 /*
-Test to check individual recipe renders ok
+Test to check individual recipe renders ok with real api
 */
 test("app page", async () => {
   const Stub = createRoutesStub([
@@ -25,35 +25,11 @@ test("app page", async () => {
           Component: RecipePage,
           loader: async ({ params }) => {
             const { id } = params;
-
-            const token = localStorage.getItem("jwtToken");
-
-            // set headers to get users favourites
-            const favHeaders = new Headers();
-            favHeaders.append("Authorization", `Bearer ${token}`);
-
-            if (token) {
-              // get recipe details and users favourites
-              const [recipeResponse, favResponse] = await Promise.all([
-                fetch(`${baseurl}/api/v1/recipes/${id}`),
-                fetch(`${baseurl}/api/v1/favorites`, {
-                  method: "GET",
-                  headers: favHeaders,
-                }),
-              ]);
-              // receive response
-              const recipe = (await recipeResponse.json()) as unknown;
-              const favs = (await favResponse.json()) as unknown;
-
-              return { recipe, favs };
-            } else {
-              // user not logged in
-              const recipeResponse = await fetch(
-                `${baseurl}/api/v1/recipes/${id}`
-              );
-              const recipe = (await recipeResponse.json()) as unknown;
-              return { recipe };
-            }
+            const recipeResponse = await fetch(
+              `${baseurl}/api/v1/recipes/${id}`
+            );
+            const recipe = (await recipeResponse.json()) as unknown;
+            return { recipe };
           },
         },
       ],
