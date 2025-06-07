@@ -5,12 +5,15 @@
 import { createRoutesStub } from "react-router";
 import { render, screen, waitFor } from "@testing-library/react";
 
-import App from "../../App.tsx";
-import { RecipePage } from "../pages/RecipePage.tsx";
+import App from "../../../App.tsx";
+import { RecipePage } from "../../pages/RecipePage.tsx";
 import { test } from "vitest";
 const baseurl =
   "http://chefdecuisine-alb-1272383064.us-east-1.elb.amazonaws.com";
-// test to check individul recipe renders ok
+
+/*
+Test to check individual recipe renders ok
+*/
 test("app page", async () => {
   const Stub = createRoutesStub([
     {
@@ -57,9 +60,10 @@ test("app page", async () => {
     },
   ]);
 
-  // render the app stub at "/"
   render(<Stub initialEntries={["/recipes/1"]} />);
 
-  // simulate interactions
-  await waitFor(() => screen.findByText("Pasta Carbonara"));
+  await waitFor(() => screen.findByText("Pasta Carbonara"), {
+    timeout: 5000,
+    interval: 100,
+  });
 });

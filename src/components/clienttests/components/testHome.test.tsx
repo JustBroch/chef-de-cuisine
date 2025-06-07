@@ -4,14 +4,14 @@
 
 import { createRoutesStub } from "react-router";
 import { render, screen, waitFor } from "@testing-library/react";
-
-import App from "../../App.tsx";
+import App from "../../../App.tsx";
 import { test } from "vitest";
 
-// test to check home page component renders properly
-test("app page", async () => {
-  const heading = "Chef de Cuisine";
+/*
+Test to check home page component renders properly
+*/
 
+test("app page", async () => {
   const Stub = createRoutesStub([
     {
       path: "/",
@@ -23,5 +23,5 @@ test("app page", async () => {
   render(<Stub initialEntries={["/"]} />);
 
   // simulate interactions
-  await waitFor(() => screen.findByText(heading));
+  await waitFor(() => screen.findByText("Chef de Cuisine"));
 });

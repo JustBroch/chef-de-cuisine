@@ -7,13 +7,17 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { expect } from "vitest";
 import { test } from "vitest";
-import { FilterPage } from "../pages/FilterPage.tsx";
-import { SearchLayout } from "../layouts/SearchLayout.tsx";
+import { FilterPage } from "../../pages/FilterPage.tsx";
+import { SearchLayout } from "../../layouts/SearchLayout.tsx";
 
 const baseurl =
   "http://chefdecuisine-alb-1272383064.us-east-1.elb.amazonaws.com";
-// test to check filter page component displays received json correctly
-// and time select works as expected. Real api call
+
+/* 
+Test to check filter page component displays received json correctly
+Real api call 
+*/
+
 test("app page", async () => {
   const user = userEvent.setup();
 
@@ -73,7 +77,10 @@ test("app page", async () => {
   render(<Stub initialEntries={["/recipes/filter"]} />);
 
   // check initial render
-  await waitFor(() => screen.findByText("Pasta Carbonara"));
+  await waitFor(() => screen.findByText("Pasta Carbonara"), {
+    timeout: 5000,
+    interval: 100,
+  });
 
   // select option
   await user.selectOptions(
@@ -89,6 +96,9 @@ test("app page", async () => {
   await waitFor(() => userEvent.click(filterButton));
 
   // check recipe in loader results
-  //await waitFor(() => screen.findByText("Pasta Carbonara"));
-  await screen.findByText("Pasta Carbonara");
+  await waitFor(() => screen.findByText("Pasta Carbonara"), {
+    timeout: 5000,
+    interval: 100,
+  });
+  //await screen.findByText("Pasta Carbonara");
 });

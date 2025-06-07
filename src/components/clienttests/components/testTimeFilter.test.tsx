@@ -7,11 +7,14 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { expect } from "vitest";
 import { test } from "vitest";
-import { FilterPage } from "../pages/FilterPage.tsx";
-import { SearchLayout } from "../layouts/SearchLayout.tsx";
+import { FilterPage } from "../../pages/FilterPage.tsx";
+import { SearchLayout } from "../../layouts/SearchLayout.tsx";
 
-// test to check filter page component displays received json correctly
-// and time select works as expected. Api call is mocked
+/*
+Test to check filter page component displays received json correctly
+ Api call is mocked
+*/
+
 test("app page", async () => {
   const user = userEvent.setup();
 
