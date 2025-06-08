@@ -2,7 +2,13 @@
 
 ## Abstract: Summarise the key points of your document.
 
-Chef de Cuisine is an online recipe platform that is mainly designed for students and young professionals who often do not have enough time, cooking experience, or a large budget for daily meals. The main idea of this platform is to make cooking much easier and more enjoyable for people who do not want to rely on expensive takeaway food or tiffin services. Users can search and filter recipes based on what ingredients they have, how much time they can spend, and their taste preferences. They can also save their favourite recipes and manage their personal profiles. The website is built with React and TypeScript for the front end, and Python Flask together with PostgreSQL for the backend. In order to make sure the system can support more users and avoid downtime, we use container technology and deploy each core service in the cloud. During the development process, our team focused on three main goals: making the system always available, making it easy to add new features, and making sure it can handle more users in the future. By using a microservices architecture and modern cloud deployment methods, we believe Chef de Cuisine is ready to help more people enjoy home cooking in a flexible and reliable way.
+Chef de Cuisine is an online recipe platform that is mainly designed for students and young professionals who often do not have enough time, cooking experience, or a large budget for daily meals. 
+The main idea of this platform is to make cooking much easier and more enjoyable for people who do not want to rely on expensive takeaway food or tiffin services. 
+Users can search and filter recipes based on what ingredients they have, how much time they can spend, and their taste preferences. 
+They can also save their favourite recipes and manage their personal profiles. The website is built with React and TypeScript for the front end, and Python Flask together with PostgreSQL for the backend.
+In order to make sure the system can support more users and avoid downtime, we use container technology and deploy each core service in the cloud. 
+During the development process, our team focused on three main goals: making the system always available, making it easy to add new features, and making sure it can handle more users in the future. 
+By using a microservices architecture and modern cloud deployment methods, we believe Chef de Cuisine is ready to help more people enjoy home cooking in a flexible and reliable way.
 
 ## Proposal Changes
 
