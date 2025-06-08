@@ -5,6 +5,7 @@
 import { createRoutesStub } from "react-router";
 import { render, screen, waitFor } from "@testing-library/react";
 import App from "../../../App.tsx";
+import { HomePage } from "../../pages/HomePage.tsx";
 import { test } from "vitest";
 
 /*
@@ -16,6 +17,12 @@ test("app page", async () => {
     {
       path: "/",
       Component: App,
+      children: [
+        {
+          index: true,
+          Component: HomePage,
+        },
+      ],
     },
   ]);
 
@@ -23,5 +30,5 @@ test("app page", async () => {
   render(<Stub initialEntries={["/"]} />);
 
   // simulate interactions
-  await waitFor(() => screen.findByText("Chef de Cuisine"));
+  await waitFor(() => screen.findByText("Home"));
 });
