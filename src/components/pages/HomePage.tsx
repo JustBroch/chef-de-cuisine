@@ -35,15 +35,22 @@ export function HomePage() {
                   </svg>
                 </Link>
                 
-                <Link
-                  to="/recipes/search"
+                <button
+                  onClick={() => {
+                    // Focus on the search input in the navbar
+                    const searchInput = document.querySelector('input[name="query"]') as HTMLInputElement;
+                    if (searchInput) {
+                      searchInput.focus();
+                      searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  }}
                   className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:border-orange-500 hover:text-orange-600 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   Search Recipes
                   <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                </Link>
+                </button>
               </div>
 
               {/* Feature Pills */}
