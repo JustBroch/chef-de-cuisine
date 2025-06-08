@@ -38,7 +38,6 @@ const Footer = ({
             links: [
                 { text: "About", url: "https://github.com/CSSE6400/2025_P2_ChefdeCuisine" },
                 { text: "Team", url: "https://github.com/CSSE6400/2025_P2_ChefdeCuisine/graphs/contributors" },
-                { text: "Help", url: "https://github.com/CSSE6400/2025_P2_ChefdeCuisine" },
             ],
         },
     ],

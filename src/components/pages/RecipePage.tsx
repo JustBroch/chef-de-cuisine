@@ -1,11 +1,16 @@
 import { useLoaderData, useFetcher, Link } from "react-router";
 import { assertIsRecipeResult } from "../types.tsx";
+import { useEffect } from "react";
 
 function isObject(value: unknown): value is object {
   return typeof value === "object" && value !== null;
 }
 
 export function RecipePage() {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { recipe, favs } = useLoaderData();
   const fetcher = useFetcher();
   console.log(recipe);

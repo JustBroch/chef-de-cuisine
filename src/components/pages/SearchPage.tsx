@@ -25,7 +25,7 @@ export function SearchPage() {
                 <p className="text-orange-100">
                   {results?.recipes.length === 0 
                     ? "No recipes found matching your search" 
-                    : `Found ${results.recipes.length} delicious recipe${results.recipes.length !== 1 ? 's' : ''}`
+                    : `Found ${results.recipes.length} recipe${results.recipes.length !== 1 ? 's' : ''}`
                   }
                 </p>
               </div>
@@ -68,27 +68,31 @@ export function SearchPage() {
                   <Link
                     key={recipe.id}
                     to={`/recipes/${recipe.id}`}
-                    className="group block bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border-2 border-gray-100 hover:border-orange-200 hover:shadow-lg transition-all duration-300"
+                    className="group block bg-white rounded-2xl border-2 border-gray-100 hover:border-orange-200 hover:shadow-lg transition-all duration-300 overflow-hidden"
                   >
-                    <div className="mb-4">
-                      <div className="w-14 h-14 bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl flex items-center justify-center mb-4 group-hover:from-orange-200 group-hover:to-amber-200 transition-all duration-300">
-                        <ChefHat className="w-7 h-7 text-orange-500" />
-                      </div>
+                    <div className="aspect-video overflow-hidden">
+                      <img 
+                        src={recipe.image_url} 
+                        alt={recipe.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-6">
                       <h3 className="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-200 mb-3">
                         {recipe.name}
                       </h3>
-                      <p className="text-gray-600 line-clamp-3 text-sm leading-relaxed">
+                      <p className="text-gray-600 line-clamp-3 text-sm leading-relaxed mb-4">
                         {recipe.description}
                       </p>
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <div className="flex items-center gap-2 text-gray-500 text-sm">
-                        <Clock className="w-4 h-4" />
-                        <span>View Recipe</span>
-                      </div>
-                      <div className="text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <BookOpen className="w-5 h-5" />
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-2 text-gray-500 text-sm">
+                          <Clock className="w-4 h-4" />
+                          <span>{recipe.time ? `${recipe.time} mins` : 'View Recipe'}</span>
+                        </div>
+                        <div className="text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <BookOpen className="w-5 h-5" />
+                        </div>
                       </div>
                     </div>
                   </Link>

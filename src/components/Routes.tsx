@@ -167,9 +167,10 @@ const router = createBrowserRouter([
           const url = new URL(request.url);
           const query = url.searchParams.get("query");
 
-          // Return empty results if no search term
+          // If no search term, fetch all recipes
           if (!query) {
-            const data: unknown = { recipes: [] };
+            const response = await fetch(`${baseurl}/api/v1/recipes`);
+            const data = (await response.json()) as unknown;
             return data;
           }
           const response = await fetch(

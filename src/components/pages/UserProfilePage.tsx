@@ -50,7 +50,7 @@ export function UserProfilePage() {
                 <User className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">User Profile</h1>
+                <h1 className="text-3xl font-bold text-white mb-2">My Profile</h1>
                 <p className="text-orange-100">Your culinary journey at Chef de Cuisine</p>
               </div>
             </div>
