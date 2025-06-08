@@ -16,6 +16,11 @@ export function FilterPage() {
   assertIsRecipesResult(results);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  
+  // Scroll to top when component mounts (fixes cuisine redirect bug)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const time = searchParams.get("time") || "";
   const cuisine = searchParams.get("cuisine") || "";
@@ -30,11 +35,22 @@ export function FilterPage() {
   
   // Form state for ingredients being selected (but not yet applied)
   const [formIngredients, setFormIngredients] = useState<string[]>(appliedIngredients);
+  
+  // Track if user manually cleared ingredients to prevent auto-sync
+  const [userClearedIngredients, setUserClearedIngredients] = useState(false);
 
   // Sync form ingredients with URL params when they change (for removals from active filters)
+  // But only if user hasn't manually cleared them
   useEffect(() => {
-    setFormIngredients(appliedIngredients);
-  }, [appliedIngredients]);
+    if (!userClearedIngredients) {
+      setFormIngredients(appliedIngredients);
+    }
+  }, [appliedIngredients, userClearedIngredients]);
+  
+  // Reset the user cleared flag when applied ingredients change from outside
+  useEffect(() => {
+    setUserClearedIngredients(false);
+  }, [ingredientsParam]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -210,7 +226,13 @@ export function FilterPage() {
                           <DynamicIngredients 
               key={appliedIngredients.join(',')} 
               initialIngredients={appliedIngredients}
-              onChange={setFormIngredients}
+              onChange={(ingredients) => {
+                setFormIngredients(ingredients);
+                // If user manually reduced ingredients, set the flag to prevent auto-sync
+                if (ingredients.length < appliedIngredients.length) {
+                  setUserClearedIngredients(true);
+                }
+              }}
             />
             </div>
 

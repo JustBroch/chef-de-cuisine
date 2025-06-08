@@ -24,7 +24,7 @@ export function DynamicIngredients({ initialIngredients = [], onChange }: Dynami
     if (ingredients.length === 0 && initialIngredients.length > 0) {
       setIngredients(initialIngredients);
     }
-  }, [ingredients.length, initialIngredients]); // Include dependencies
+  }, [initialIngredients.join(',')]); // Use string comparison to avoid unnecessary re-renders
 
   useEffect(() => {
     onChange(ingredients);
