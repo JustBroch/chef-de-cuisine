@@ -27,3 +27,12 @@ dist-ssr
 .terraform*
 terraform*
 credentials
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
