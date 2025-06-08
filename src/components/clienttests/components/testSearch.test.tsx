@@ -57,13 +57,13 @@ test("app page", async () => {
 
   render(<Stub initialEntries={["/recipes/search"]} />);
 
-  await waitFor(() => screen.getByPlaceholderText("search"));
-  const searchInput = screen.getByPlaceholderText("search");
+  await waitFor(() => screen.getByPlaceholderText("Search for recipes..."));
+  const searchInput = screen.getByPlaceholderText("Search for recipes...");
 
   await waitFor(() => user.type(searchInput, "pasta"));
   expect(searchInput.value).toBe("pasta");
 
-  const searchButton = screen.getByRole("button", { name: /search/i });
+  const searchButton = screen.getByTestId("search");
   await waitFor(() => userEvent.click(searchButton));
 
   await waitFor(() => screen.findByText("Pasta Carbonara"));

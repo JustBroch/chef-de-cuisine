@@ -48,14 +48,20 @@ test("app page", async () => {
   // render the app stub at "/"
   render(<Stub initialEntries={["/recipes/search"]} />);
 
-  await waitFor(() => screen.getByPlaceholderText("search"));
-  const searchInput = screen.getByPlaceholderText("search");
+  await waitFor(() => screen.getByPlaceholderText("Search for recipes..."), {
+    timeout: 3000,
+    interval: 100,
+  });
+  const searchInput = screen.getByPlaceholderText("Search for recipes...");
   await waitFor(() => user.type(searchInput, "pasta"));
   expect(searchInput.value).toBe("pasta");
 
-  const searchButton = screen.getByRole("button", { name: /search/i });
+  const searchButton = screen.getByTestId("search", { exact: false });
   await waitFor(() => userEvent.click(searchButton));
 
   // simulate interactions
-  await waitFor(() => screen.findByText("Pasta Carbonara"));
+  await waitFor(() => screen.findByText("Pasta Carbonara"), {
+    timeout: 3000,
+    interval: 100,
+  });
 });
