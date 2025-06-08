@@ -35,7 +35,7 @@ interface MenuItem {
   items?: MenuItem[];
 }
 
-interface Navbar1Props {
+interface NavbarProps {
   logo?: {
     url: string;
     src: string;
@@ -55,7 +55,7 @@ interface Navbar1Props {
   };
 }
 
-const Navbar1 = ({
+const Navbar = ({
   logo = {
     url: "/",
     src: `${cdclogo}`,
@@ -65,11 +65,11 @@ const Navbar1 = ({
   menu = [
     { title: "Home", url: "/" },
     {
-      title: "Recipe Filters",
+      title: "Recipes",
       url: "/recipes/filter/",
     },
     {
-      title: "User Profile",
+      title: "My Profile",
       url: "/user",
     },
   ],
@@ -77,7 +77,7 @@ const Navbar1 = ({
     login: { title: "Login", url: "/login" },
     signup: { title: "Sign up", url: "/register" },
   },
-}: Navbar1Props) => {
+}: NavbarProps) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
     !!localStorage.getItem("jwtToken")
   );
@@ -97,11 +97,11 @@ const Navbar1 = ({
   }, []);
 
   return (
-    <section className="py-4">
-      <div className="container">
+    <section className="py-4 bg-white shadow-sm border-b border-gray-100">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Menu */}
         <nav className="hidden justify-between lg:flex">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
             {/* Logo */}
             <a href={logo.url} className="flex items-center gap-2">
               <img src={logo.src} className="max-h-8" alt={logo.alt} />
@@ -109,7 +109,7 @@ const Navbar1 = ({
                 {logo.title}
               </span>
             </a>
-            <div className="flex items-center">
+            <div className="flex items-center gap-6">
               <NavigationMenu>
                 <NavigationMenuList>
                   {menu.map((item) => renderMenuItem(item, isLoggedIn))}
@@ -118,19 +118,19 @@ const Navbar1 = ({
               <SearchForm />
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-3">
             {isLoggedIn ? (
-              <Button asChild variant="outline" size="sm">
+              <Button asChild variant="outline" className="h-10 text-base">
                 <a href="#" onClick={logout}>
                   Logout
                 </a>
               </Button>
             ) : (
               <>
-                <Button asChild variant="outline" size="sm">
+                <Button asChild variant="outline" className="h-10 text-base">
                   <a href={auth.login.url}>{auth.login.title}</a>
                 </Button>
-                <Button asChild size="sm">
+                <Button asChild className="h-10 text-base bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0">
                   <a href={auth.signup.url}>{auth.signup.title}</a>
                 </Button>
               </>
@@ -174,7 +174,7 @@ const Navbar1 = ({
                     <Button asChild variant="outline">
                       <a href={auth.login.url}>{auth.login.title}</a>
                     </Button>
-                    <Button asChild>
+                    <Button asChild className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0">
                       <a href={auth.signup.url}>{auth.signup.title}</a>
                     </Button>
                   </div>
@@ -206,13 +206,13 @@ const renderMenuItem = (item: MenuItem, isLoggedIn: boolean) => {
 
   return (
     <>
-      {!isLoggedIn && item.title == "User Profile" ? (
+      {!isLoggedIn && item.title == "My Profile" ? (
         <></>
       ) : (
         <NavigationMenuItem key={item.title}>
           <NavigationMenuLink
             href={item.url}
-            className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
+            className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-base font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
           >
             {item.title}
           </NavigationMenuLink>
@@ -264,4 +264,4 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
   );
 };
 
-export { Navbar1 };
+export { Navbar };

@@ -34,35 +34,24 @@ const Footer = ({
     tagline = "Your Go-To Recipe Platform",
     menuItems = [
         {
-            title: "Product",
+            title: "Project",
             links: [
-                { text: "Overview", url: "#" },
-                { text: "Features", url: "#" },
+                { text: "About", url: "https://github.com/CSSE6400/2025_P2_ChefdeCuisine" },
+                { text: "Team", url: "https://github.com/CSSE6400/2025_P2_ChefdeCuisine/graphs/contributors" },
             ],
-        },
-        {
-            title: "Company",
-            links: [
-                { text: "About", url: "#" },
-                { text: "Team", url: "#" },
-            ],
-        },
-        {
-            title: "Resources",
-            links: [{ text: "Help", url: "#" }],
         },
     ],
     copyright = "© 2025 Chef de Cuisine. All rights reserved.",
     bottomLinks = [],
 }: FooterProps) => {
     return (
-        <section className="py-32">
-            <div className="container">
+        <section className="py-16 bg-white mt-16">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <footer>
-                    <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
-                        <div className="col-span-2 mb-8 lg:mb-0">
-                            <div className="flex items-center gap-2 lg:justify-start">
-                                <a href="https://shadcnblocks.com">
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                        <div className="col-span-1 lg:col-span-2 mb-8 lg:mb-0">
+                            <div className="flex items-center gap-2">
+                                <a href={logo.url}>
                                     <img
                                         src={logo.src}
                                         alt={logo.alt}
@@ -70,22 +59,24 @@ const Footer = ({
                                         className="h-10"
                                     />
                                 </a>
-                                <p className="text-xl font-semibold">
-                                    {logo.title}
-                                </p>
+                                <div>
+                                    <p className="text-xl font-semibold text-orange-600">
+                                        {logo.title}
+                                    </p>
+                                    <p className="text-sm text-gray-600 mt-1">{tagline}</p>
+                                </div>
                             </div>
-                            <p className="mt-4 font-bold">{tagline}</p>
                         </div>
                         {menuItems.map((section, sectionIdx) => (
                             <div key={sectionIdx}>
-                                <h3 className="mb-4 font-bold">
+                                <h3 className="mb-4 font-bold text-gray-900">
                                     {section.title}
                                 </h3>
-                                <ul className="space-y-4 text-muted-foreground">
+                                <ul className="space-y-4 text-gray-600">
                                     {section.links.map((link, linkIdx) => (
                                         <li
                                             key={linkIdx}
-                                            className="font-medium hover:text-primary"
+                                            className="font-medium hover:text-orange-600 transition-colors duration-200"
                                         >
                                             <a href={link.url}>{link.text}</a>
                                         </li>
@@ -94,18 +85,8 @@ const Footer = ({
                             </div>
                         ))}
                     </div>
-                    <div className="mt-24 flex flex-col justify-between gap-4 border-t pt-8 text-sm font-medium text-muted-foreground md:flex-row md:items-center">
-                        <p>{copyright}</p>
-                        <ul className="flex gap-4">
-                            {bottomLinks.map((link, linkIdx) => (
-                                <li
-                                    key={linkIdx}
-                                    className="underline hover:text-primary"
-                                >
-                                    <a href={link.url}>{link.text}</a>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="mt-12 border-t border-gray-200 pt-8">
+                        <p className="text-sm font-medium text-gray-600">{copyright}</p>
                     </div>
                 </footer>
             </div>

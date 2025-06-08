@@ -1,11 +1,13 @@
-import { Navbar1 } from "../navbar1";
+import { Navbar } from "../navbar";
+import { Footer } from "../footer";
 import { Outlet } from "react-router";
 
 export function SearchLayout() {
   return (
     <>
-      <Navbar1 />
+      <Navbar />
       <Outlet />
+      <Footer />
     </>
   );
 }
