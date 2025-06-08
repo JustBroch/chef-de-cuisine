@@ -54,6 +54,6 @@ export function ErrorPage() {
   );
 }
 
-function isError(error: any): error is { statusText: string } {
-  return "statusText" in error;
+function isError(error: unknown): error is { statusText: string } {
+  return typeof error === "object" && error !== null && "statusText" in error;
 }

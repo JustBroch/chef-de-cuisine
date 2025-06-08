@@ -18,10 +18,7 @@ interface FooterProps {
     tagline?: string;
     menuItems?: MenuItem[];
     copyright?: string;
-    bottomLinks?: {
-        text: string;
-        url: string;
-    }[];
+
 }
 
 const Footer = ({
@@ -42,8 +39,8 @@ const Footer = ({
         },
     ],
     copyright = "© 2025 Chef de Cuisine. All rights reserved.",
-    bottomLinks = [],
 }: FooterProps) => {
+
     return (
         <section className="py-16 bg-white mt-16">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">

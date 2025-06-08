@@ -5,22 +5,36 @@ import {
   Form,
   Link,
 } from "react-router";
-import { type FormEvent } from "react";
+import { type FormEvent, useState, useEffect, useMemo } from "react";
 import { assertIsRecipesResult } from "../types.tsx";
+import { DynamicIngredients } from "../DynamicIngredients";
+import { formatCookingTime } from "../../lib/timeUtils";
 
 export function FilterPage() {
   const results = useLoaderData();
-  console.log(results);
+
   assertIsRecipesResult(results);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const time = searchParams.get("time") || "";
-  const ingredient1 = searchParams.get("ingredient1") || "";
-  const ingredient2 = searchParams.get("ingredient2") || "";
-  const ingredient3 = searchParams.get("ingredient3") || "";
   const cuisine = searchParams.get("cuisine") || "";
   const taste = searchParams.get("taste") || "";
+  
+  // Handle ingredients from URL params (these are the APPLIED ingredients in active filters)
+  const ingredientsParam = searchParams.get("ingredients");
+  const appliedIngredients = useMemo(() => 
+    ingredientsParam ? ingredientsParam.split(',') : [], 
+    [ingredientsParam]
+  );
+  
+  // Form state for ingredients being selected (but not yet applied)
+  const [formIngredients, setFormIngredients] = useState<string[]>(appliedIngredients);
+
+  // Sync form ingredients with URL params when they change (for removals from active filters)
+  useEffect(() => {
+    setFormIngredients(appliedIngredients);
+  }, [appliedIngredients]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,10 +42,16 @@ export function FilterPage() {
     const formData = new FormData(event.currentTarget);
     const params = new URLSearchParams();
 
+    // Add non-ingredient form data
     for (const [key, value] of formData.entries()) {
-      if (value) {
+      if (value && key !== 'ingredients') {
         params.append(key, value as string);
       }
+    }
+
+    // Add ingredients as comma-separated string
+    if (formIngredients.length > 0) {
+      params.append('ingredients', formIngredients.join(','));
     }
 
     navigate(`?${params.toString()}`);
@@ -43,6 +63,44 @@ export function FilterPage() {
       select.selectedIndex = 0;
     });
     navigate("/recipes/filter/");
+  };
+
+  const removeFilter = (filterType: string) => {
+    const params = new URLSearchParams(searchParams);
+    
+    if (filterType === 'time') {
+      params.delete('time');
+      // Clear the dropdown
+      const timeSelect = document.getElementById('time') as HTMLSelectElement;
+      if (timeSelect) timeSelect.value = '';
+    } else if (filterType === 'cuisine') {
+      params.delete('cuisine');
+      // Clear the dropdown
+      const cuisineSelect = document.getElementById('cuisine') as HTMLSelectElement;
+      if (cuisineSelect) cuisineSelect.value = '';
+    } else if (filterType === 'taste') {
+      params.delete('taste');
+      // Clear the dropdown
+      const tasteSelect = document.getElementById('taste') as HTMLSelectElement;
+      if (tasteSelect) tasteSelect.value = '';
+    }
+    
+    navigate(`?${params.toString()}`);
+  };
+
+  const removeIngredient = (ingredientToRemove: string) => {
+    const updatedIngredients = appliedIngredients.filter((ingredient: string) => ingredient !== ingredientToRemove);
+    setFormIngredients(updatedIngredients);
+    
+    // Update URL - this will trigger the page to re-render with new initialIngredients
+    const params = new URLSearchParams(searchParams);
+    if (updatedIngredients.length > 0) {
+      params.set('ingredients', updatedIngredients.join(','));
+    } else {
+      params.delete('ingredients');
+    }
+    
+    navigate(`?${params.toString()}`);
   };
 
   const getSelectStyle = () => {
@@ -77,22 +135,17 @@ export function FilterPage() {
                   defaultValue={searchParams.get("time") ?? ""}
                 >
                   <option value="">Any time</option>
-                  <option value="15">15 mins</option>
-                  <option value="20">20 mins</option>
-                  <option value="25">25 mins</option>
-                  <option value="30">30 mins</option>
-                  <option value="35">35 mins</option>
-                  <option value="40">40 mins</option>
-                  <option value="45">45 mins</option>
-                  <option value="50">50 mins</option>
-                  <option value="55">55 mins</option>
-                  <option value="60">60 mins</option>
-                  <option value="70">70 mins</option>
-                  <option value="80">80 mins</option>
-                  <option value="90">90 mins</option>
-                  <option value="100">100 mins</option>
-                  <option value="110">110 mins</option>
-                  <option value="120">120 mins</option>
+                  <option value="15">Quick (15 mins)</option>
+                  <option value="20">Quick (20 mins)</option>
+                  <option value="25">Quick (25 mins)</option>
+                  <option value="30">Quick (30 mins)</option>
+                  <option value="40">Medium (30-40 mins)</option>
+                  <option value="50">Medium (40-50 mins)</option>
+                  <option value="60">Medium (50-60 mins)</option>
+                  <option value="75">Longer (1-1.5 hours)</option>
+                  <option value="90">Longer (1.5 hours)</option>
+                  <option value="120">Extended (~2 hours)</option>
+                  <option value="180">Extended (~3 hours)</option>
                 </select>
               </div>
 
@@ -152,69 +205,13 @@ export function FilterPage() {
               </div>
             </div>
 
-            {/* Ingredients */}
+            {/* Dynamic Ingredients */}
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                <svg className="inline h-5 w-5 mr-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-                Ingredients (optional)
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label htmlFor="ingredient1" className="block text-sm font-medium text-gray-700 mb-2">
-                    Ingredient 1
-                  </label>
-                  <select
-                    id="ingredient1"
-                    name="ingredient1"
-                    className={getSelectStyle()}
-                    defaultValue={searchParams.get("ingredient1") ?? ""}
-                  >
-                    <option value="">Select ingredient</option>
-                    <option value="lettuce">Lettuce</option>
-                    <option value="beef">Beef</option>
-                    <option value="eggs">Eggs</option>
-                    <option value="milk">Milk</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="ingredient2" className="block text-sm font-medium text-gray-700 mb-2">
-                    Ingredient 2
-                  </label>
-                  <select
-                    id="ingredient2"
-                    name="ingredient2"
-                    className={getSelectStyle()}
-                    defaultValue={searchParams.get("ingredient2") ?? ""}
-                  >
-                    <option value="">Select ingredient</option>
-                    <option value="lettuce">Lettuce</option>
-                    <option value="beef">Beef</option>
-                    <option value="eggs">Eggs</option>
-                    <option value="milk">Milk</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="ingredient3" className="block text-sm font-medium text-gray-700 mb-2">
-                    Ingredient 3
-                  </label>
-                  <select
-                    id="ingredient3"
-                    name="ingredient3"
-                    className={getSelectStyle()}
-                    defaultValue={searchParams.get("ingredient3") ?? ""}
-                  >
-                    <option value="">Select ingredient</option>
-                    <option value="lettuce">Lettuce</option>
-                    <option value="beef">Beef</option>
-                    <option value="eggs">Eggs</option>
-                    <option value="milk">Milk</option>
-                  </select>
-                </div>
-              </div>
+                          <DynamicIngredients 
+              key={appliedIngredients.join(',')} 
+              initialIngredients={appliedIngredients}
+              onChange={setFormIngredients}
+            />
             </div>
 
             {/* Action Buttons */}
@@ -243,42 +240,85 @@ export function FilterPage() {
         </div>
 
         {/* Active Filters */}
-        {(time || cuisine || taste || ingredient1 || ingredient2 || ingredient3) && (
+        {(time || cuisine || taste || appliedIngredients.length > 0) && (
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Active Filters:</h2>
             <div className="flex flex-wrap gap-2">
               {time && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                <span className="group inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800 hover:bg-orange-200 transition-colors duration-200">
                   <svg className="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  {time} mins
+                  {formatCookingTime(parseInt(time))}
+                  <button
+                    onClick={() => removeFilter('time')}
+                    className="ml-2 opacity-0 group-hover:opacity-100 hover:bg-orange-300 rounded-full p-0.5 transition-all duration-200"
+                    aria-label="Remove time filter"
+                  >
+                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </span>
               )}
               {cuisine && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                <span className="group inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 hover:bg-green-200 transition-colors duration-200">
                   <svg className="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   {cuisine}
+                  <button
+                    onClick={() => removeFilter('cuisine')}
+                    className="ml-2 opacity-0 group-hover:opacity-100 hover:bg-green-300 rounded-full p-0.5 transition-all duration-200"
+                    aria-label="Remove cuisine filter"
+                  >
+                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </span>
               )}
               {taste && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                <span className="group inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors duration-200">
                   <svg className="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   {taste}
+                  <button
+                    onClick={() => removeFilter('taste')}
+                    className="ml-2 opacity-0 group-hover:opacity-100 hover:bg-purple-300 rounded-full p-0.5 transition-all duration-200"
+                    aria-label="Remove taste filter"
+                  >
+                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </span>
               )}
-              {[ingredient1, ingredient2, ingredient3].filter(Boolean).map((ingredient, index) => (
-                <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
-                  <svg className="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {appliedIngredients.length > 0 && (
+                <div className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-amber-50 text-amber-900 border border-amber-200">
+                  <svg className="mr-2 h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
-                  {ingredient}
-                </span>
-              ))}
+                  <span className="font-semibold mr-2">Ingredients:</span>
+                  <div className="flex flex-wrap gap-1">
+                    {appliedIngredients.map((ingredient: string, index: number) => (
+                      <span key={index} className="group inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors duration-200">
+                        <span className="capitalize mr-1">{ingredient}</span>
+                        <button
+                          onClick={() => removeIngredient(ingredient)}
+                          className="opacity-0 group-hover:opacity-100 hover:bg-amber-300 rounded-full p-0.5 transition-all duration-200"
+                          aria-label={`Remove ${ingredient}`}
+                        >
+                          <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -327,7 +367,7 @@ export function FilterPage() {
                         <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        {result.time} mins
+                        {formatCookingTime(result.time)}
                       </span>
                       <span className="capitalize">{result.difficulty}</span>
                     </div>
@@ -341,3 +381,4 @@ export function FilterPage() {
     </div>
   );
 }
+

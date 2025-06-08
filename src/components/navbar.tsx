@@ -1,4 +1,4 @@
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import { Menu } from "lucide-react";
 import cdclogo from "../assets/logo.png";
 import SearchForm from "./SearchForm";
 import {
@@ -23,7 +23,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Header } from "@radix-ui/react-accordion";
+
 
 import React, { useState, useEffect } from "react";
 

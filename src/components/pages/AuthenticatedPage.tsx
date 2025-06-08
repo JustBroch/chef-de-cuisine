@@ -6,7 +6,7 @@ const baseurl = "http://chefdecuisine-alb-1272383064.us-east-1.elb.amazonaws.com
 
 export default function AuthenticatedPage() {
   const [message, setMessage] = useState("");
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ id: number; username: string; email: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -28,7 +28,7 @@ export default function AuthenticatedPage() {
         setUser(res.data);
         setMessage("Successfully authenticated! Welcome to your protected page.");
         setLoading(false);
-      } catch (err) {
+      } catch {
         setError("Authentication failed or token expired");
         setLoading(false);
       }
