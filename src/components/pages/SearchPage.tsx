@@ -9,11 +9,11 @@ export function SearchPage() {
   const query = searchParams.get("query") || "";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-6xl mx-auto py-12">
         {/* Search Header */}
         <div className="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden mb-8">
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-8">
+          <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-8">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                 <Search className="w-8 h-8 text-white" />
@@ -22,7 +22,7 @@ export function SearchPage() {
                 <h1 className="text-3xl font-bold text-white mb-2">
                   Search Results for "{query}"
                 </h1>
-                <p className="text-blue-100">
+                <p className="text-orange-100">
                   {results?.recipes.length === 0 
                     ? "No recipes found matching your search" 
                     : `Found ${results.recipes.length} delicious recipe${results.recipes.length !== 1 ? 's' : ''}`

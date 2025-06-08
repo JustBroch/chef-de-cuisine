@@ -97,8 +97,8 @@ const Navbar1 = ({
   }, []);
 
   return (
-    <section className="py-4">
-      <div className="container">
+    <section className="py-4 bg-white shadow-sm border-b border-gray-100">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Menu */}
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
@@ -130,7 +130,7 @@ const Navbar1 = ({
                 <Button asChild variant="outline" size="sm">
                   <a href={auth.login.url}>{auth.login.title}</a>
                 </Button>
-                <Button asChild size="sm">
+                <Button asChild size="sm" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0">
                   <a href={auth.signup.url}>{auth.signup.title}</a>
                 </Button>
               </>
@@ -174,7 +174,7 @@ const Navbar1 = ({
                     <Button asChild variant="outline">
                       <a href={auth.login.url}>{auth.login.title}</a>
                     </Button>
-                    <Button asChild>
+                    <Button asChild className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0">
                       <a href={auth.signup.url}>{auth.signup.title}</a>
                     </Button>
                   </div>

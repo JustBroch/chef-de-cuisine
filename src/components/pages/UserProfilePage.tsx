@@ -40,7 +40,7 @@ export function UserProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto py-12">
         {/* User Profile Header */}
         <div className="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden mb-8">
