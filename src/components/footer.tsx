@@ -56,13 +56,13 @@ const Footer = ({
     bottomLinks = [],
 }: FooterProps) => {
     return (
-        <section className="py-32">
+        <section className="py-16 bg-gradient-to-br from-orange-50 to-amber-50 mt-16">
             <div className="container">
                 <footer>
                     <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
                         <div className="col-span-2 mb-8 lg:mb-0">
                             <div className="flex items-center gap-2 lg:justify-start">
-                                <a href="https://shadcnblocks.com">
+                                <a href={logo.url}>
                                     <img
                                         src={logo.src}
                                         alt={logo.alt}
@@ -70,22 +70,22 @@ const Footer = ({
                                         className="h-10"
                                     />
                                 </a>
-                                <p className="text-xl font-semibold">
+                                <p className="text-xl font-semibold text-orange-600">
                                     {logo.title}
                                 </p>
                             </div>
-                            <p className="mt-4 font-bold">{tagline}</p>
+                            <p className="mt-4 font-bold text-gray-700">{tagline}</p>
                         </div>
                         {menuItems.map((section, sectionIdx) => (
                             <div key={sectionIdx}>
-                                <h3 className="mb-4 font-bold">
+                                <h3 className="mb-4 font-bold text-gray-900">
                                     {section.title}
                                 </h3>
-                                <ul className="space-y-4 text-muted-foreground">
+                                <ul className="space-y-4 text-gray-600">
                                     {section.links.map((link, linkIdx) => (
                                         <li
                                             key={linkIdx}
-                                            className="font-medium hover:text-primary"
+                                            className="font-medium hover:text-orange-600 transition-colors duration-200"
                                         >
                                             <a href={link.url}>{link.text}</a>
                                         </li>
@@ -94,13 +94,13 @@ const Footer = ({
                             </div>
                         ))}
                     </div>
-                    <div className="mt-24 flex flex-col justify-between gap-4 border-t pt-8 text-sm font-medium text-muted-foreground md:flex-row md:items-center">
+                    <div className="mt-12 flex flex-col justify-between gap-4 border-t border-gray-200 pt-8 text-sm font-medium text-gray-600 md:flex-row md:items-center">
                         <p>{copyright}</p>
                         <ul className="flex gap-4">
                             {bottomLinks.map((link, linkIdx) => (
                                 <li
                                     key={linkIdx}
-                                    className="underline hover:text-primary"
+                                    className="underline hover:text-orange-600 transition-colors duration-200"
                                 >
                                     <a href={link.url}>{link.text}</a>
                                 </li>

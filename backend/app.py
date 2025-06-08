@@ -647,6 +647,7 @@ def init_database():
                 recipe = Recipe(
                     name=data["name"],
                     description=data["description"],
+                    image_url=data["image_url"],
                     time=data["time"],
                     cuisine=data["cuisine"],
                     difficulty=data["difficulty"],
@@ -1153,10 +1154,11 @@ def init_db_command():
             recipe = Recipe(
                 name=data["name"],
                 description=data["description"],
+                image_url=data["image_url"],
                 time=data["time"],
                 cuisine=data["cuisine"],
                 difficulty=data["difficulty"],
-                tools=json.dumps(data["tools"]),
+                tools=json.dumps(data["tools"]),        # Convert arrays to JSON strings
                 ingredients=json.dumps(data["ingredients"]),
                 taste=json.dumps(data["taste"])
             )

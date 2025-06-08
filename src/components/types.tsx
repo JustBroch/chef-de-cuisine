@@ -8,7 +8,7 @@ export type RecipeData = {
   tools: string[];
   cuisine: string;
   difficulty: string;
-  img_url: string;
+  image_url: string;
 };
 
 export type RecipesResult = {
