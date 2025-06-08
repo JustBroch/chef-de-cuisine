@@ -1,7 +1,6 @@
 import { useForm, type FieldError } from "react-hook-form";
-import { useNavigate, useSubmit, useActionData } from "react-router";
+import { useSubmit, useActionData } from "react-router";
 import { ValidationError } from "./ValidationError";
-import { Link } from "lucide-react";
 
 type Login = {
   password: string;
@@ -14,15 +13,11 @@ export function LoginPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<Login>();
-  const navigate = useNavigate();
   const actionData = useActionData();
   const submit = useSubmit();
 
   function onSubmit(login: Login) {
     submit(login, { method: "post" });
-  }
-  function handleButtonClick() {
-    navigate("/", { replace: true });
   }
 
   function getEditorStyle(fieldError: FieldError | undefined) {
