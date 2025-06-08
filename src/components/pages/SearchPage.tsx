@@ -1,6 +1,7 @@
 import { useLoaderData, useSearchParams, Link } from "react-router";
 import { assertIsRecipesResult } from "../types.tsx";
 import { Search, ChefHat, BookOpen, Clock } from "lucide-react";
+import { formatCookingTime } from "../../lib/timeUtils";
 
 export function SearchPage() {
   const results = useLoaderData();
@@ -64,7 +65,7 @@ export function SearchPage() {
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {results.recipes.map((recipe: any) => (
+                {results.recipes.map((recipe) => (
                   <Link
                     key={recipe.id}
                     to={`/recipes/${recipe.id}`}
@@ -88,7 +89,7 @@ export function SearchPage() {
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                         <div className="flex items-center gap-2 text-gray-500 text-sm">
                           <Clock className="w-4 h-4" />
-                          <span>{recipe.time ? `${recipe.time} mins` : 'View Recipe'}</span>
+                          <span>{recipe.time ? formatCookingTime(recipe.time) : 'View Recipe'}</span>
                         </div>
                         <div className="text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <BookOpen className="w-5 h-5" />

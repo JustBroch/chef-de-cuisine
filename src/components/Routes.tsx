@@ -35,7 +35,7 @@ const router = createBrowserRouter([
           const formData = await request.formData();
 
           const registration = Object.fromEntries(formData);
-          console.log(registration);
+      
           const username = registration.username;
           const email = registration.email;
           const password = registration.password;
@@ -189,13 +189,24 @@ const router = createBrowserRouter([
           const time = url.searchParams.get("time");
           const cuisine = url.searchParams.get("cuisine");
           const taste = url.searchParams.get("taste");
-          const ingredient1 = url.searchParams.get("ingredient1");
-          const ingredient2 = url.searchParams.get("ingredient2");
-          const ingredient3 = url.searchParams.get("ingredient3");
-
-          const ingredients: string[] = [];
+          
+          // Get all ingredients parameters (handles multiple values with same name)
+          const ingredientsParams = url.searchParams.getAll("ingredients");
+          const ingredients: string[] = ingredientsParams.filter(Boolean);
+          
           const params = new URLSearchParams();
 
+          // Check if any filters are actually applied
+          const hasFilters = time || cuisine || taste || ingredients.length > 0;
+
+          // If no filters are applied, return all recipes
+          if (!hasFilters) {
+            const response = await fetch(`${baseurl}/api/v1/recipes`);
+            const data = (await response.json()) as unknown;
+            return data;
+          }
+
+          // Build filter parameters
           if (time) {
             params.append("time", time);
           }
@@ -204,15 +215,6 @@ const router = createBrowserRouter([
           }
           if (taste) {
             params.append("taste", taste);
-          }
-          if (ingredient1) {
-            ingredients.push(ingredient1);
-          }
-          if (ingredient2) {
-            ingredients.push(ingredient2);
-          }
-          if (ingredient3) {
-            ingredients.push(ingredient3);
           }
           if (ingredients.length != 0) {
             params.append("ingredients", ingredients.join(","));
@@ -243,13 +245,11 @@ const router = createBrowserRouter([
             }),
             headers: loginHeaders,
           });
-          const data = (await response.json()) as unknown;
-          console.log(data);
+          const data = (await response.json()) as { access_token?: string; message?: string };
           if (data.access_token) {
             localStorage.setItem("jwtToken", data.access_token);
           }
-          if (data.message == "Login successful") {
-            console.log("success");
+          if (data.message === "Login successful") {
             return redirect("/");
           }
           return data;

@@ -1,6 +1,7 @@
 import { useLoaderData, useFetcher, Link } from "react-router";
 import { assertIsRecipeResult } from "../types.tsx";
 import { useEffect } from "react";
+import { formatCookingTime } from "../../lib/timeUtils";
 
 function isObject(value: unknown): value is object {
   return typeof value === "object" && value !== null;
@@ -13,8 +14,6 @@ export function RecipePage() {
   }, []);
   const { recipe, favs } = useLoaderData();
   const fetcher = useFetcher();
-  console.log(recipe);
-  console.log(favs);
   assertIsRecipeResult(recipe);
 
   // check favs received
@@ -24,16 +23,11 @@ export function RecipePage() {
   if (favs && !("favorites" in favs)) {
     throw new Error("no favorites property");
   }
-  if (favs && Array.isArray(favs.favorites)) {
-    console.log("It's an array");
-  } else {
-    console.log("It's not an array");
-  }
 
   // check if favorite already
   let isFavorite = "";
   if (favs) {
-    isFavorite = favs.favorites.some((fav) => fav.id === recipe.id);
+    isFavorite = favs.favorites.some((fav: { id: number }) => fav.id === recipe.id);
   }
 
   const handleClick = () => {
@@ -80,9 +74,9 @@ export function RecipePage() {
                     <svg className="h-5 w-5 text-orange-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-sm font-medium text-gray-700">Cook Time</span>
+                    <span className="text-sm font-medium text-gray-700">Cooking Time</span>
                   </div>
-                  <p className="text-lg font-semibold text-gray-900 mt-1">{recipe.time} mins</p>
+                  <p className="text-lg font-semibold text-gray-900 mt-1">{formatCookingTime(recipe.time)}</p>
                 </div>
                 
                 <div className="bg-amber-50 rounded-xl p-4">

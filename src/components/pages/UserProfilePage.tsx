@@ -1,5 +1,6 @@
 import { useLoaderData, Link } from "react-router";
-import { User, Mail, Heart, ChefHat, BookOpen } from "lucide-react";
+import { User, Mail, Heart, ChefHat, BookOpen, Clock } from "lucide-react";
+import { formatCookingTime } from "../../lib/timeUtils";
 
 interface UserDetails {
   username: string;
@@ -9,6 +10,10 @@ interface UserDetails {
 interface Recipe {
   id: number;
   name: string;
+  description?: string;
+  image_url?: string;
+  time?: number;
+  cuisine?: string;
 }
 
 interface Favorites {
@@ -29,11 +34,7 @@ export function UserProfilePage() {
   if (!("favorites" in favs)) {
     throw new Error("no favorites property");
   }
-  if (Array.isArray(favs.favorites)) {
-    console.log("It's an array");
-  } else {
-    console.log("It's not an array");
-  }
+
   // check favs received
   if (!isObject(userDetails)) {
     throw new Error("userDetails not an object");
@@ -42,7 +43,7 @@ export function UserProfilePage() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto py-12">
-        {/* User Profile Header */}
+        {/* My Profile Header */}
         <div className="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden mb-8">
           <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-8">
             <div className="flex items-center gap-4">
@@ -108,27 +109,51 @@ export function UserProfilePage() {
                 </Link>
               </div>
             ) : (
-              <div className="grid gap-4">
-                {favs.favorites.map((recipe: any) => (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {favs.favorites.map((recipe) => (
                   <Link
                     key={recipe.id}
                     to={`/recipes/${recipe.id}`}
-                    className="group block p-6 bg-gray-50 rounded-xl hover:bg-orange-50 transition-all duration-200 border border-gray-200 hover:border-orange-200"
+                    className="group block bg-white rounded-2xl border-2 border-gray-100 hover:border-pink-200 hover:shadow-lg transition-all duration-300 overflow-hidden"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center group-hover:from-orange-200 group-hover:to-amber-200 transition-all duration-200">
-                        <ChefHat className="w-6 h-6 text-orange-500" />
+                    <div className="aspect-video overflow-hidden">
+                      <img 
+                        src={recipe.image_url} 
+                        alt={recipe.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Heart className="w-4 h-4 text-pink-500 fill-current" />
+                        <span className="text-xs font-medium text-pink-600 uppercase tracking-wide">Favorite</span>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-orange-600 transition-colors duration-200">
-                          {recipe.name}
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          Tap to view the full recipe
+                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-pink-600 transition-colors duration-200 mb-3">
+                        {recipe.name}
+                      </h3>
+                      {recipe.description && (
+                        <p className="text-gray-600 line-clamp-3 text-sm leading-relaxed mb-4">
+                          {recipe.description}
                         </p>
-                      </div>
-                      <div className="text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <BookOpen className="w-5 h-5" />
+                      )}
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-4 text-gray-500 text-sm">
+                          {recipe.time && (
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              <span>{formatCookingTime(recipe.time)}</span>
+                            </div>
+                          )}
+                          {recipe.cuisine && (
+                            <span className="px-2 py-1 bg-gray-100 rounded-md text-xs font-medium">
+                              {recipe.cuisine}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <BookOpen className="w-5 h-5" />
+                        </div>
                       </div>
                     </div>
                   </Link>
