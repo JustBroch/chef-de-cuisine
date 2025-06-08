@@ -2,7 +2,6 @@ import {
   createBrowserRouter,
   redirect,
   RouterProvider,
-  useNavigate,
 } from "react-router";
 import { SearchPage } from "./pages/SearchPage";
 import { FilterPage } from "./pages/FilterPage";
