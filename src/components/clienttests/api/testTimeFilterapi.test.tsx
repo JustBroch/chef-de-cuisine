@@ -83,12 +83,14 @@ test("app page", async () => {
 
   // select option
   await user.selectOptions(
-    screen.getByRole("combobox", { name: "Cooking Time:" }),
+    screen.getByRole("combobox", { name: "Cooking Time" }),
     "30"
   );
 
   // check selected
-  expect(screen.getByRole("option", { name: "30 mins" }).selected).toBe(true);
+  expect(screen.getByRole("option", { name: "Quick (30 mins)" }).selected).toBe(
+    true
+  );
 
   // press filter button which will reload the page with data received from mocked api call
   const filterButton = screen.getByRole("button", { name: "Apply Filters" });

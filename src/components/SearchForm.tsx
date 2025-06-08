@@ -4,7 +4,9 @@ import { useState } from "react";
 
 export function SearchForm() {
   const [searchParams] = useSearchParams();
-  const [searchValue, setSearchValue] = useState(searchParams.get("query") ?? "");
+  const [searchValue, setSearchValue] = useState(
+    searchParams.get("query") ?? ""
+  );
 
   const clearSearch = () => {
     setSearchValue("");
@@ -36,6 +38,7 @@ export function SearchForm() {
           )}
           <button
             className="absolute inset-y-0 right-0 flex items-center justify-center px-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-r-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200"
+            data-testid="search"
             type="submit"
           >
             <Search className="w-4 h-4 stroke-2" />
