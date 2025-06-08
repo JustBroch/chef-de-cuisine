@@ -121,12 +121,15 @@ filtered = engine.apply(preliminary)
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
-| `/api/v1/recipes` | GET | Optional | Get recommended recipes |
+| `/api/v1/recipes` | GET | Optional | Get recommended recipes (limit 20) |
 | `/api/v1/recipes` | POST | Optional | Create new recipe |
-| `/api/v1/recipes/<id>` | GET | Optional | Get specific recipe |
-| `/api/v1/recipes/filter` | GET | Optional | Advanced filtering |
-| `/api/v1/recipes/search` | GET | Optional | Search by name |
-| `/api/v1/admin/init-db` | POST | None | Initialize database |
+| `/api/v1/recipes/<id>` | GET | Optional | Get specific recipe by ID |
+| `/api/v1/recipes/<name>` | PUT | Optional | Update recipe by name |
+| `/api/v1/recipes/<name>` | DELETE | Optional | Delete recipe by name |
+| `/api/v1/recipes/filter` | GET | Optional | Advanced filtering with Strategy Pattern |
+| `/api/v1/recipes/search` | GET | Optional | Search by name (partial matching) |
+| `/api/v1/admin/init-db` | POST | None | Initialize database with sample data |
+| `/api/v1/admin/recipes` | DELETE | None | Delete all recipes (admin function) |
 
 ### Favorites Endpoints
 
@@ -193,11 +196,59 @@ GET /api/v1/recipes/filter?time=45&cuisine=Asian&ingredients=chicken,ginger&tool
 
 ### JWT Implementation
 
-```python
-# Token generation with integer identity
-access_token = create_access_token(identity=user.id)
+**Custom JWT Implementation (Not Flask-JWT-Extended)**
 
-# Token validation - returns integer directly
+The backend uses a custom JWT implementation using the PyJWT library for more control:
+
+```python
+# Custom JWT utility functions
+def create_access_token(identity):
+    """Create a JWT access token with user identity."""
+    payload = {
+        'user_id': identity,
+        'exp': datetime.utcnow() + app.config["JWT_ACCESS_TOKEN_EXPIRES"],
+        'iat': datetime.utcnow()
+    }
+    return jwt.encode(payload, app.config["JWT_SECRET_KEY"], algorithm='HS256')
+
+def decode_token(token):
+    """Decode and validate a JWT token."""
+    try:
+        payload = jwt.decode(token, app.config["JWT_SECRET_KEY"], algorithms=['HS256'])
+        return payload
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
+def get_jwt_identity():
+    """Get the current user identity from JWT token."""
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return None
+    
+    try:
+        token = auth_header.split(' ')[1]  # Remove 'Bearer ' prefix
+        payload = decode_token(token)
+        if payload:
+            return payload['user_id']
+        return None
+    except (IndexError, KeyError):
+        return None
+
+def jwt_required(optional=False):
+    """Decorator to require JWT authentication."""
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            user_id = get_jwt_identity()
+            if user_id is None and not optional:
+                return jsonify({'message': 'Token missing or invalid'}), 401
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+# Usage in endpoints
 @jwt_required()
 def protected_endpoint():
     user_id = get_jwt_identity()  # Returns integer directly
@@ -210,10 +261,12 @@ def public_endpoint():
 ```
 
 **Key Features:**
-- **Integer Identities**: Flask-JWT-Extended natively supports integer user IDs
-- **Direct Usage**: No string conversion needed - `get_jwt_identity()` returns the integer
+- **Custom Implementation**: Built with PyJWT for precise control over token handling
+- **Integer User IDs**: Stores user_id as integer in JWT payload
+- **Bearer Token**: Expects `Authorization: Bearer <token>` header format
 - **Token Expiration**: 6-hour access token lifetime
-- **Optional Authentication**: Some endpoints support both authenticated and anonymous access
+- **Optional Authentication**: Flexible decorator supports both public and protected endpoints
+- **Error Handling**: Graceful handling of expired/invalid tokens
 
 ### CORS Configuration for Authorization Headers
 

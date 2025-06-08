@@ -13,6 +13,7 @@ import App from "../App";
 import { HomePage } from "./pages/HomePage";
 import { SearchLayout } from "./layouts/SearchLayout";
 import { ErrorPage } from "./pages/ErrorPage";
+import AuthenticatedPage from "./pages/AuthenticatedPage";
 
 const baseurl =
   "http://chefdecuisine-alb-1272383064.us-east-1.elb.amazonaws.com";
@@ -81,6 +82,11 @@ const router = createBrowserRouter([
 
           return { userDetails, favs };
         },
+      },
+      {
+        path: "authenticated",
+        Component: AuthenticatedPage,
+        errorElement: <ErrorPage />,
       },
       {
         path: "recipes/:id",
