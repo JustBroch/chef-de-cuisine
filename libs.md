@@ -48,7 +48,7 @@ This file lists all external libraries used in the Chef de Cuisine project, with
 ## Testing Dependencies
 
 ### Frontend Testing
-- **Playwright**: https://playwright.dev/ - End-to-end testing framework (Apache 2.0)
+
 
 ### Backend Testing
 - **pytest**: https://pytest.org/ - Python testing framework (MIT License)
@@ -56,4 +56,4 @@ This file lists all external libraries used in the Chef de Cuisine project, with
 
 ## License Compatibility
 
-All listed libraries use permissive licenses (MIT, Apache 2.0, BSD-3-Clause, ISC) that are compatible with this educational project. No GPL or other copyleft licenses are used that would require releasing this code under the same terms. 
+All listed libraries use permissive licenses (MIT, Apache 2.0, BSD-3-Clause, ISC) that are compatible with this educational project. No GPL or other copyleft licenses are used that would require releasing this code under the same terms.

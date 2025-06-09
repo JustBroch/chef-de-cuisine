@@ -1,55 +1,69 @@
-# AI Usage Documentation
+# AI Development Assistance Documentation
 
-This document describes how generative AI tools were used in the development of the Chef de Cuisine project.
+This document describes how AI tools assisted in the development of the Chef de Cuisine project, working collaboratively with human developers.
 
 ## AI Tools Used
 
-- **Claude (Anthropic)**: Code generation, debugging, architecture guidance, and documentation
+- **Claude 4 Sonnet (Anthropic)**: Development assistance, code suggestions, debugging support, architecture guidance, and documentation enhancement
 - **GitHub Copilot**: Code completion and inline suggestions during development
 
-## Usage Examples
+## Collaborative Development Examples
 
 ### Project Setup
-Generated initial React TypeScript project structure with Vite, Tailwind CSS, and component templates.
+Claude 4 Sonnet assisted with structuring the initial React TypeScript project setup, suggesting optimal configurations for Vite, Tailwind CSS, and component organization patterns.
 
-### Component Development  
-Created UI components like recipe cards, filter sidebars, and navigation elements with proper TypeScript interfaces.
+### Component Development
+Provided guidance and code suggestions for UI components like recipe cards, filter sidebars, and navigation elements, helping implement proper TypeScript interfaces and React best practices.
 
 ### Backend Development
-Generated Flask API endpoints, database models, and authentication middleware.
+Assisted with Flask API endpoint design, helped implement database models with SQLAlchemy, and provided guidance on authentication middleware patterns.
 
 ### Testing
-Created Playwright test suites for end-to-end testing of user interactions.
+Collaborated on developing comprehensive test suites, suggesting testing strategies for components and API endpoints using Vitest and React Testing Library.
 
-## Files with AI Assistance
+## Files Enhanced with AI Assistance
 
 ### Frontend
-- UI components in `src/components/`
-- Page components in `src/pages/`
-- Utility functions in `src/lib/`
+- UI components in `src/components/` - Claude 4 Sonnet provided suggestions for component structure and TypeScript interfaces
+- Page components in `src/pages/` - Assisted with React Router implementation and responsive design patterns
+- Utility functions in `src/lib/` - Helped optimize utility functions and class name helpers
 
 ### Backend
-- API endpoints in `backend/app.py`
-- Test files in `backend/test/`
+- API endpoints in `backend/app.py` - Collaborated on Flask route design and SQLAlchemy model relationships
+- Test files in `backend/test/` - Provided guidance on testing patterns and coverage strategies
 
 ### Infrastructure
-- Terraform configuration files
-- Docker and deployment scripts
+- Terraform configuration files - Assisted with AWS resource configuration and best practices
+- Docker and deployment scripts - Helped optimize containerization and deployment automation
 
 ### Documentation
-- Parts of README.md and technical documentation
+- Architecture documentation - Collaborated on technical documentation and diagram creation
+- API documentation - Assisted with endpoint documentation and usage examples
 
-## Manual Work
+## Human-Led Development Process
 
-All architectural decisions and design patterns were made by the development team. AI tools were used to implement these decisions, not to make them.
+**All architectural decisions, design patterns, and technical choices were made by human developers.** Claude 4 Sonnet served as a development assistant, providing suggestions and helping implement decisions rather than making them independently.
 
-Key manual work included:
-- Architecture design and technology choices
-- Code review and testing of all AI-generated content
-- Business logic and domain-specific requirements
-- Security considerations and error handling
-- Performance optimization and accessibility improvements
+### Developer-Controlled Areas
+- **Architecture Design**: Single ALB with path-based routing strategy
+- **Technology Stack**: React, Flask, PostgreSQL, AWS ECS choices
+- **Business Logic**: Recipe filtering algorithms and user management flows
+- **Security Implementation**: JWT authentication and database security measures
+- **Performance Optimization**: Caching strategies and query optimization
+- **Testing Strategy**: Comprehensive testing approach and coverage requirements
 
-## Verification Process
+### AI Assistance Areas
+- **Code Implementation**: Suggesting implementation patterns for developer-defined requirements
+- **Documentation Enhancement**: Helping articulate technical concepts and create comprehensive docs
+- **Debugging Support**: Identifying potential issues and suggesting solutions
+- **Best Practices**: Recommending industry-standard approaches for chosen technologies
 
-Every AI-generated code block was manually reviewed, tested, and often significantly modified to meet project requirements and coding standards.
+## Development Workflow
+
+1. **Human Planning**: Developers defined requirements, architecture, and implementation approach
+2. **AI Collaboration**: Claude 4 Sonnet provided code suggestions and implementation guidance
+3. **Human Review**: All AI-assisted code was thoroughly reviewed, tested, and often modified
+4. **Integration Testing**: Comprehensive testing ensured all components worked together correctly
+5. **Performance Validation**: Manual optimization and performance tuning of the complete system
+
+Every piece of AI-assisted code was manually verified, tested in context, and adapted to meet specific project requirements and coding standards.

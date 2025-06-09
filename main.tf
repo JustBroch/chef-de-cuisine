@@ -49,9 +49,15 @@ variable "project_name" {
 }
 
 variable "ecr_repository_name" {
-  description = "Name of the existing ECR repository containing the application image"
+  description = "Name of the ECR repository for the backend application image"
   type        = string
   default     = "chefde-cuisine-backend"
+}
+
+variable "ecr_frontend_repository_name" {
+  description = "Name of the ECR repository for the frontend application image"
+  type        = string
+  default     = "chefde-cuisine-frontend"
 }
 
 variable "ecr_image_tag" {
@@ -122,8 +128,13 @@ output "load_balancer_dns" {
 }
 
 output "ecr_repository_url" {
-  description = "URL of the ECR repository"
+  description = "URL of the backend ECR repository"
   value       = aws_ecr_repository.app.repository_url
+}
+
+output "ecr_frontend_repository_url" {
+  description = "URL of the frontend ECR repository"
+  value       = aws_ecr_repository.frontend.repository_url
 }
 
 #########################
@@ -150,10 +161,14 @@ resource "aws_cloudwatch_log_group" "app" {
 }
 
 #########################
-# ECR Repository
+# ECR Repositories
 #########################
 resource "aws_ecr_repository" "app" {
   name = var.ecr_repository_name
+}
+
+resource "aws_ecr_repository" "frontend" {
+  name = var.ecr_frontend_repository_name
 }
 
 #########################
@@ -206,15 +221,36 @@ resource "aws_security_group" "alb" {
   }
 }
 
-resource "aws_security_group" "ecs_service" {
-  name        = "${var.project_name}-ecs-sg"
-  description = "Allow traffic from ALB"
+resource "aws_security_group" "ecs_backend" {
+  name        = "${var.project_name}-backend-sg"
+  description = "Allow backend traffic from ALB"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
-    description     = "App traffic from ALB"
+    description     = "Backend API traffic from ALB"
     from_port       = 5000
     to_port         = 5000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "ecs_frontend" {
+  name        = "${var.project_name}-frontend-sg"
+  description = "Allow frontend traffic from ALB"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    description     = "Frontend traffic from ALB"
+    from_port       = 80
+    to_port         = 80
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }
@@ -237,7 +273,7 @@ resource "aws_security_group" "rds" {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = [aws_security_group.ecs_service.id]
+    security_groups = [aws_security_group.ecs_backend.id]
   }
 
   egress {
@@ -283,12 +319,14 @@ resource "aws_ecs_cluster" "app" {
 }
 
 locals {
-  container_name = "${var.project_name}-backend"
-  image_url      = "${aws_ecr_repository.app.repository_url}:${var.ecr_image_tag}"
+  backend_container_name = "${var.project_name}-backend"
+  frontend_container_name = "${var.project_name}-frontend"
+  backend_image_url      = "${aws_ecr_repository.app.repository_url}:${var.ecr_image_tag}"
+  frontend_image_url     = "${aws_ecr_repository.frontend.repository_url}:${var.ecr_image_tag}"
 }
 
-resource "aws_ecs_task_definition" "app" {
-  family                   = "${var.project_name}-taskdef"
+resource "aws_ecs_task_definition" "backend" {
+  family                   = "${var.project_name}-backend-taskdef"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
@@ -298,8 +336,8 @@ resource "aws_ecs_task_definition" "app" {
 
   container_definitions = jsonencode([
     {
-      name      = local.container_name,
-      image     = local.image_url,
+      name      = local.backend_container_name,
+      image     = local.backend_image_url,
       essential = true,
       portMappings = [
         {
@@ -319,7 +357,43 @@ resource "aws_ecs_task_definition" "app" {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.app.name,
           awslogs-region        = var.aws_region,
-          awslogs-stream-prefix = "ecs"
+          awslogs-stream-prefix = "backend"
+        }
+      }
+    }
+  ])
+}
+
+resource "aws_ecs_task_definition" "frontend" {
+  family                   = "${var.project_name}-frontend-taskdef"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "256"
+  memory                   = "512"
+  execution_role_arn       = data.aws_iam_role.ecs_execution.arn
+  task_role_arn            = data.aws_iam_role.ecs_task.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = local.frontend_container_name,
+      image     = local.frontend_image_url,
+      essential = true,
+      portMappings = [
+        {
+          containerPort = 80,
+          hostPort      = 80,
+          protocol      = "tcp"
+        }
+      ],
+      environment = [
+        { name = "VITE_API_URL", value = "http://${aws_lb.app.dns_name}/api" }
+      ],
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.app.name,
+          awslogs-region        = var.aws_region,
+          awslogs-stream-prefix = "frontend"
         }
       }
     }
@@ -336,9 +410,27 @@ resource "aws_lb" "app" {
   subnets            = data.aws_subnets.default.ids
 }
 
-resource "aws_lb_target_group" "app" {
-  name        = "${var.project_name}-tg"
+resource "aws_lb_target_group" "backend" {
+  name        = "${var.project_name}-backend-tg"
   port        = 5000
+  protocol    = "HTTP"
+  vpc_id      = data.aws_vpc.default.id
+  target_type = "ip"
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    matcher             = "200-399"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+  }
+}
+
+resource "aws_lb_target_group" "frontend" {
+  name        = "${var.project_name}-frontend-tg"
+  port        = 80
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.default.id
   target_type = "ip"
@@ -361,30 +453,70 @@ resource "aws_lb_listener" "http" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.app.arn
+    target_group_arn = aws_lb_target_group.frontend.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "api" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/*"]
+    }
   }
 }
 
 #########################
 # ECS Service
 #########################
-resource "aws_ecs_service" "app" {
-  name            = "${var.project_name}-service"
+resource "aws_ecs_service" "backend" {
+  name            = "${var.project_name}-backend-service"
   cluster         = aws_ecs_cluster.app.id
-  task_definition = aws_ecs_task_definition.app.arn
+  task_definition = aws_ecs_task_definition.backend.arn
   desired_count   = var.desired_count
   launch_type     = "FARGATE"
 
   network_configuration {
     assign_public_ip = true
     subnets         = data.aws_subnets.default.ids
-    security_groups = [aws_security_group.ecs_service.id]
+    security_groups = [aws_security_group.ecs_backend.id]
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.app.arn
-    container_name   = local.container_name
+    target_group_arn = aws_lb_target_group.backend.arn
+    container_name   = local.backend_container_name
     container_port   = 5000
+  }
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+}
+
+resource "aws_ecs_service" "frontend" {
+  name            = "${var.project_name}-frontend-service"
+  cluster         = aws_ecs_cluster.app.id
+  task_definition = aws_ecs_task_definition.frontend.arn
+  desired_count   = var.desired_count
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    assign_public_ip = true
+    subnets         = data.aws_subnets.default.ids
+    security_groups = [aws_security_group.ecs_frontend.id]
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.frontend.arn
+    container_name   = local.frontend_container_name
+    container_port   = 80
   }
 
   lifecycle {
@@ -395,20 +527,45 @@ resource "aws_ecs_service" "app" {
 #########################
 # Auto Scaling
 #########################
-resource "aws_appautoscaling_target" "ecs" {
+resource "aws_appautoscaling_target" "backend" {
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.app.name}/${aws_ecs_service.app.name}"
+  resource_id        = "service/${aws_ecs_cluster.app.name}/${aws_ecs_service.backend.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   min_capacity       = var.min_capacity
   max_capacity       = var.max_capacity
 }
 
-resource "aws_appautoscaling_policy" "cpu_scale_out" {
-  name               = "${var.project_name}-cpu-scale-out"
+resource "aws_appautoscaling_target" "frontend" {
+  service_namespace  = "ecs"
+  resource_id        = "service/${aws_ecs_cluster.app.name}/${aws_ecs_service.frontend.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  min_capacity       = var.min_capacity
+  max_capacity       = var.max_capacity
+}
+
+resource "aws_appautoscaling_policy" "backend_cpu_scale_out" {
+  name               = "${var.project_name}-backend-cpu-scale-out"
   policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_appautoscaling_target.ecs.resource_id
-  scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
-  service_namespace  = aws_appautoscaling_target.ecs.service_namespace
+  resource_id        = aws_appautoscaling_target.backend.resource_id
+  scalable_dimension = aws_appautoscaling_target.backend.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.backend.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+    target_value       = 60
+    scale_out_cooldown = 60
+    scale_in_cooldown  = 120
+  }
+}
+
+resource "aws_appautoscaling_policy" "frontend_cpu_scale_out" {
+  name               = "${var.project_name}-frontend-cpu-scale-out"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.frontend.resource_id
+  scalable_dimension = aws_appautoscaling_target.frontend.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.frontend.service_namespace
 
   target_tracking_scaling_policy_configuration {
     predefined_metric_specification {
@@ -424,7 +581,7 @@ resource "aws_appautoscaling_policy" "cpu_scale_out" {
 # Docker Build and Push
 #########################
 
-resource "null_resource" "docker_build_push" {
+resource "null_resource" "docker_build_push_backend" {
   depends_on = [aws_ecr_repository.app]
 
   provisioner "local-exec" {
@@ -432,7 +589,7 @@ resource "null_resource" "docker_build_push" {
       # ECR Login with explicit credentials file and profile
       AWS_SHARED_CREDENTIALS_FILE=${abspath("${path.module}/${var.credentials_file}")} aws ecr get-login-password --region ${var.aws_region} --profile ${local.effective_aws_profile} | docker login --username AWS --password-stdin ${aws_ecr_repository.app.repository_url}
       
-      # Build and push Docker image
+      # Build and push backend Docker image
       cd backend && \
       docker build --platform linux/amd64 -t ${var.ecr_repository_name} . && \
       docker tag ${var.ecr_repository_name}:latest ${aws_ecr_repository.app.repository_url}:latest && \
@@ -450,16 +607,54 @@ resource "null_resource" "docker_build_push" {
   }
 }
 
-# Force ECS service redeployment when Docker image changes
-resource "null_resource" "force_ecs_deployment" {
-  depends_on = [null_resource.docker_build_push, aws_ecs_service.app]
+resource "null_resource" "docker_build_push_frontend" {
+  depends_on = [aws_ecr_repository.frontend]
 
   provisioner "local-exec" {
-    command = "AWS_SHARED_CREDENTIALS_FILE=${abspath("${path.module}/${var.credentials_file}")} aws ecs update-service --region ${var.aws_region} --profile ${local.effective_aws_profile} --cluster ${aws_ecs_cluster.app.name} --service ${aws_ecs_service.app.name} --force-new-deployment"
+    command = <<-EOT
+      # ECR Login with explicit credentials file and profile
+      AWS_SHARED_CREDENTIALS_FILE=${abspath("${path.module}/${var.credentials_file}")} aws ecr get-login-password --region ${var.aws_region} --profile ${local.effective_aws_profile} | docker login --username AWS --password-stdin ${aws_ecr_repository.frontend.repository_url}
+      
+      # Build and push frontend Docker image
+      docker build --platform linux/amd64 -t ${var.ecr_frontend_repository_name} -f Dockerfile.frontend . && \
+      docker tag ${var.ecr_frontend_repository_name}:latest ${aws_ecr_repository.frontend.repository_url}:latest && \
+      docker push ${aws_ecr_repository.frontend.repository_url}:latest
+    EOT
+  }
+
+  triggers = {
+    # Trigger on source code changes
+    package_json_hash = filemd5("${path.module}/package.json")
+    dockerfile_hash = filemd5("${path.module}/Dockerfile.frontend")
+    src_changes = join(",", [for f in fileset("${path.module}/src", "**/*.{tsx,ts,css,html}") : filemd5("${path.module}/src/${f}")])
+    # Trigger on every deployment
+    always_rebuild = timestamp()
+  }
+}
+
+# Force ECS service redeployment when Docker images change
+resource "null_resource" "force_ecs_deployment_backend" {
+  depends_on = [null_resource.docker_build_push_backend, aws_ecs_service.backend]
+
+  provisioner "local-exec" {
+    command = "AWS_SHARED_CREDENTIALS_FILE=${abspath("${path.module}/${var.credentials_file}")} aws ecs update-service --region ${var.aws_region} --profile ${local.effective_aws_profile} --cluster ${aws_ecs_cluster.app.name} --service ${aws_ecs_service.backend.name} --force-new-deployment"
   }
 
   triggers = {
     # Trigger when Docker image changes
-    docker_image_id = null_resource.docker_build_push.id
+    docker_image_id = null_resource.docker_build_push_backend.id
+  }
+}
+
+resource "null_resource" "force_ecs_deployment_frontend" {
+  depends_on = [null_resource.docker_build_push_frontend, aws_ecs_service.frontend]
+
+  provisioner "local-exec" {
+    command = "AWS_SHARED_CREDENTIALS_FILE=${abspath("${path.module}/${var.credentials_file}")} aws ecs update-service --region ${var.aws_region} --profile ${local.effective_aws_profile} --cluster ${aws_ecs_cluster.app.name} --service ${aws_ecs_service.frontend.name} --force-new-deployment"
+  }
+
+  triggers = {
+    # Trigger when Docker image changes
+    docker_image_id = null_resource.docker_build_push_frontend.id
   }
 } 

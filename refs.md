@@ -20,4 +20,4 @@ This file contains all references cited in the codebase using IEEE referencing s
 
 ## Additional References
 
-*Add any additional references for ideas, algorithms, or code fragments used from external sources* 
+*Add any additional references for ideas, algorithms, or code fragments used from external sources*
