@@ -36,7 +36,7 @@ test("app page", async () => {
     },
   ]);
 
-  render(<Stub initialEntries={["/recipes/182"]} />);
+  render(<Stub initialEntries={["/recipes/349"]} />);
 
   await waitFor(() => screen.findByText("Pasta Carbonara"), {
     timeout: 5000,
