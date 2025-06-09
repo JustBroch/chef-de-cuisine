@@ -20,4 +20,8 @@ This file contains all references cited in the codebase using IEEE referencing s
 
 ## Additional References
 
-*Add any additional references for ideas, algorithms, or code fragments used from external sources*
+[8] SQLAlchemy Documentation, "SQLAlchemy Core Tutorial," https://docs.sqlalchemy.org/en/14/core/tutorial.html, accessed 2025.
+
+[9] Docker Documentation, "Get Started with Docker," https://docs.docker.com/get-started/, accessed 2025.
+
+[10] Amazon ECS Documentation, "Getting Started with Amazon ECS using Fargate," https://docs.aws.amazon.com/AmazonECS/latest/developerguide/getting-started-fargate.html, accessed 2025.

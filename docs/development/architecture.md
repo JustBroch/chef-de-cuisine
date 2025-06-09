@@ -117,7 +117,7 @@ Content-Type: application/json
 **Backend Service:**
 - **Image**: Python Flask + SQLAlchemy
 - **Instances**: 2-5 (auto-scaling based on CPU)
-- **Port**: 5000 (Flask default)
+- **Port**: 5174 (Local development)
 - **Health Check**: `GET /` (returns JSON)
 - **Resources**: 0.5 vCPU, 1 GB RAM
 
@@ -146,7 +146,7 @@ Content-Type: application/json
 
 **Backend Target Group:**
 - **Protocol**: HTTP
-- **Port**: 5000
+- **Port**: 5174
 - **Health Check**: `GET /` every 30 seconds
 - **Healthy Threshold**: 2 consecutive successes
 - **Unhealthy Threshold**: 5 consecutive failures

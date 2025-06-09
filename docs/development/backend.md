@@ -777,9 +777,9 @@ COPY..
 ENV FLASK_APP=app.py
 ENV PYTHONUNBUFFERED=1
 
-EXPOSE 5000
+EXPOSE 5174
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5174"]
 ```
 
 **ECS Task Definition**
@@ -796,7 +796,7 @@ CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
    "image": "${ECR_REPOSITORY_URL}:latest",
    "portMappings": [
     {
-     "containerPort": 5000,
+                 "containerPort": 5174,
      "protocol": "tcp"
     }
    ],
@@ -872,7 +872,7 @@ Scale In: Remove 1 instance when CPU < 70% for 5 minutes
 - **VPC**: Uses default VPC with multiple availability zones
 - **Security Groups**: 
  - ALB: Allows HTTP (80) and HTTPS (443) from internet
- - ECS: Allows traffic from ALB on port 5000
+ - ECS: Allows traffic from ALB on port 5174
  - RDS: Allows traffic from ECS on port 5432
 
 **IAM Roles:**
