@@ -2,6 +2,24 @@
 
 A modern recipe discovery and management platform built with React and Flask. Find, filter, and save your favorite recipes with an intuitive and responsive interface.
 
+
+## Preview
+
+### Desktop View
+
+<img width="720" height="407" alt="desktop_home" src="https://github.com/user-attachments/assets/5c4ac687-de94-4f31-b51f-f5b84bcf7830" />
+
+---
+
+<img width="720" height="407" alt="desktop_search_recipe" src="https://github.com/user-attachments/assets/6e175f42-cf96-4bd8-8405-104bdd38ebbe" />
+
+
+### Mobile View
+
+| Home | Search | Sign in |
+|:----:|:------:|:-------:|
+| <img width="377" height="668" alt="mobile_home" src="https://github.com/user-attachments/assets/f4677052-9e34-48a1-95a3-7e3025354a55" /> | <img width="377" height="669" alt="mobile_search_recipe" src="https://github.com/user-attachments/assets/dcd3ab27-2d15-4541-a7a9-f0eb5ee0cc65" /> | <img width="376" height="667" alt="mobile_sign_in" src="https://github.com/user-attachments/assets/f892d989-7b06-46e5-8f49-21fac26051f6" /> |
+
 ## Features
 
 ### Advanced Recipe Search & Filtering
